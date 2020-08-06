@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <title>@ViewData["Title"] - EngineeringToolsServer</title>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/mapbox-gl-framerate.js"></script>
+    <link rel="stylesheet" href="~/css/site.css"/>
+</head>
+<body>
+<div id="root">
+    <aside id="navMenu"></aside>
+    @RenderBody()
+</div>
+@await RenderSectionAsync("Scripts", false)
+<script src="~/js/index.js"></script>
+</body>
+</html>

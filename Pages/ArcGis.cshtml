@@ -1,0 +1,1428 @@
+﻿@page "/ArcGis"
+@model ArcGisModel
+@{ ViewData["Title"] = "ArcGIS Map"; }
+<div id="viewDiv" class="mapView" style="height: 100%; margin: 0; padding: 0; width: 100%;"></div>
+
+@section Scripts {
+    <script>
+
+        const LoadMapEventTag = "LoadMapEvent";
+        var LoadMapEvent = new Event(LoadMapEventTag);
+
+        (async () => {
+            await SetVariable("BaseUrl", { url: window.location.origin });
+        })();
+
+
+        let mat2 = glMatrix.mat2;
+        let mat2d = glMatrix.mat2d;
+        let mat3 = glMatrix.mat3;
+        let mat4 = glMatrix.mat4;
+        let quat = glMatrix.quat;
+        let quat2 = glMatrix.quat2;
+        let vec2 = glMatrix.vec2;
+        let vec3 = glMatrix.vec3;
+        let vec4 = glMatrix.mat2d;
+
+    </script>
+    <script>
+
+        //const requireUrls = {
+        //    context: "esri",
+        //    paths: {
+        //        "Map": "https://js.arcgis.com/4.16/esri/Map",
+        //        "MapView": "https://js.arcgis.com/4.16/esri/views/MapView",
+        //        "FeatureLayer": "https://js.arcgis.com/4.16/esri/layers/FeatureLayer",
+        //        "GroupLayer": "https://js.arcgis.com/4.16/esri/layers/GroupLayer",
+        //        "FeatureTable": "https://js.arcgis.com/4.16/esri/widgets/FeatureTable",
+        //        "watchUtils": "https://js.arcgis.com/4.16/esri/core/watchUtils",
+        //        "Legend": "https://js.arcgis.com/4.16/esri/widgets/Legend",
+        //        "Expand": "https://js.arcgis.com/4.16/esri/widgets/Expand",
+        //        "Fullscreen": "https://js.arcgis.com/4.16/esri/widgets/Fullscreen",
+        //        "Home": "https://js.arcgis.com/4.16/esri/widgets/Home",
+        //        "LayerList": "https://js.arcgis.com/4.16/esri/widgets/LayerList",
+        //        "colorRendererCreator": "https://js.arcgis.com/4.16/esri/smartMapping/renderers/color",
+        //        "colorSymbology": "https://js.arcgis.com/4.16/esri/smartMapping/symbology/color",
+        //        "histogram": "https://js.arcgis.com/4.16/esri/smartMapping/statistics/histogram",
+        //        "ColorSlider": "https://js.arcgis.com/4.16/esri/widgets/smartMapping/ColorSlider",
+        //        "Color": "https://js.arcgis.com/4.16/esri/Color",
+        //        "intl": "https://js.arcgis.com/4.16/esri/intl"
+        //    }
+        //}
+
+        function loadArcgis() {
+            alert("Arcgis is loaded");
+        }
+
+
+        window.addEventListener(LoadMapEventTag, function(e) {
+
+            const containerId = "viewDiv";
+
+            const { loadArcGISModules, PathLayer } = window.deck;
+
+                loadArcGISModules([
+                    "esri/Map",
+                    "esri/views/MapView",
+                    "esri/layers/FeatureLayer",
+                    "esri/layers/GroupLayer",
+                    "esri/widgets/FeatureTable",
+                    "esri/core/watchUtils",
+                    "esri/core/promiseUtils",
+                    "esri/layers/GraphicsLayer",
+                    "esri/views/2d/layers/BaseLayerViewGL2D"
+                ]).then(({ DeckLayer, modules }) => {
+
+                    const [
+                        ArcGISMap,
+                        MapView,
+                        FeatureLayer,
+                        GroupLayer,
+                        FeatureTable,
+                        watchUtils,
+                        promiseUtils,
+                        GraphicsLayer,
+                        BaseLayerViewGL2D
+                    ] = modules;
+
+                    const map = new ArcGISMap({
+                        "basemap": "dark-gray-vector",
+                        "spatialReference": @Html.Raw(Model.SpatialReference),
+                    });
+
+                    const view = new MapView({
+                        "container": containerId,
+                        "map": map,
+                        highlightOptions: {
+                            color: [255, 255, 0, 1],
+                            haloOpacity: 0.9,
+                            fillOpacity: 0.2
+                        },
+                        constraints: {
+                            rotationEnabled: false
+                        },
+                        "spatialReference": @Html.Raw(Model.SpatialReference),
+                        "extent": @Html.Raw(Model.Extent)
+                    });
+
+                    const fullscreenButton = window.addFullscreenButton(containerId, view, "top-right");
+
+                    //Legend
+                    //const legendButton = window.addLegendButton(view, "bottom-left");
+
+                    //Home Button
+                    const homeButton = window.addHomeButton(view, "top-left");
+
+                    //const simpleSymbol = {
+                    //    type: "simple-marker", // autocasts as new SimpleFillSymbol()
+                    //    color: [227, 15, 15, 0.8],
+                    //    outline: {
+                    //        // autocasts as new SimpleLineSymbol()
+                    //        color: [255, 255, 255],
+                    //        width: 1
+                    //    }
+                    //};
+
+                    //const simpleLineSymbol = {
+                    //    type: "simple-line",
+                    //    color: [226, 15, 15],
+                    //    width: 3
+                    //};
+
+                    //const simpleRenderer = {
+                    //    type: "simple",
+                    //    symbol: simpleLineSymbol
+                    //};
+
+                    var wellDataLayer;
+
+                    GetVariable("WellLocations").then((wellLocationsData) => {
+
+                        const deckLayer = new DeckLayer({
+                            copyright: "https://trmcnealy.github.io",
+                            title: "Well Locations",
+                            fields: [
+                                {
+                                    name: "ObjectID",
+                                    alias: "ObjectID",
+                                    type: "oid"
+                                },
+                                {
+                                    name: "Api",
+                                    alias: "Api",
+                                    type: "string"
+                                }
+                            ],
+                            outFields: ["*"],
+                            objectIdField: "ObjectID",
+                            geometryType: "polyline",
+                            spatialReference: @Html.Raw(Model.SpatialReference),
+                            popupTemplate: {
+                                title: "Well - {Api}",
+                                content: [
+                                    {
+                                        type: "fields",
+                                        fieldInfos: [
+                                            {
+                                                fieldName: "Api",
+                                                label: "Api"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        });
+
+                        deckLayer.deck.layers = [
+                            new PathLayer({
+                                data: wellLocationsData,
+                                getPath: function(d) {
+                                    console.log(d);
+                                    return d.geometry.paths;
+                                },
+                                getColor: [255, 0, 0, 255],
+                                getWidth: 10
+                            })
+                        ];
+
+                        map.add(deckLayer);
+
+                        @*var CustomLayerView2D = BaseLayerViewGL2D.createSubclass({
+                            // Locations of the two vertex attributes that we use. They
+                            // will be bound to the shader program before linking.
+                            aPosition: 0,
+                            aOffset: 1,
+                            aTexcoord: 2,
+                            aDistance: 3,
+                            aUpright: 4,
+
+                            constructor: function() {
+                                // Geometrical transformations that must be recomputed
+                                // from scratch at every frame.
+                                this.transform = mat3.create();
+                                this.rotation = mat3.create();
+                                this.translationToCenter = vec2.create();
+                                this.screenTranslation = vec2.create();
+                                this.display = mat3.create();
+
+                                // Whether the vertex and index buffers need to be updated
+                                // due to a change in the layer data.
+                                this.needsUpdate = false;
+
+                                // We listen for changes to the graphics collection of the layer
+                                // and trigger the generation of new frames. A frame rendered while
+                                // `needsUpdate` is true may cause an update of the vertex and
+                                // index buffers.
+                                var requestUpdate = function() {
+                                    // Tessellate graphics.
+                                    this.promises = [];
+
+                                    this.layer.source.forEach(this.processGraphic.bind(this));
+
+                                    //this.layer.source.forEach(function(item) {
+                                    //    this.processGraphic(item);
+                                    //});
+
+                                    promiseUtils.all(this.promises).then(
+                                        function(meshes) {
+                                            this.meshes = meshes;
+                                            this.needsUpdate = true;
+                                            this.requestRender();
+                                        }.bind(this)
+                                    );
+                                }.bind(this);
+
+                                this.watcher = watchUtils.on(
+                                    this,
+                                    "layer.source",
+                                    "change",
+                                    requestUpdate,
+                                    requestUpdate,
+                                    requestUpdate
+                                );
+                            },
+
+                            // Called once a custom layer is added to the map.layers collection and this layer view is instantiated.
+                            attach: function() {
+                                var gl = this.context;
+
+                                // Define and compile shaders.
+                                var vertexSource =
+                                    "precision highp float;" +
+                                        "uniform mat3 u_transform;" +
+                                        "uniform mat3 u_rotation;" +
+                                        "uniform mat3 u_display;" +
+                                        "attribute vec2 a_position;" +
+                                        "attribute vec2 a_offset;" +
+                                        "attribute vec2 a_texcoord;" +
+                                        "attribute float a_distance;" +
+                                        "attribute float a_upright;" +
+                                        "void main() {" +
+                                        "  vec3 transformedOffset = mix(u_rotation * vec3(a_offset, 0.0), vec3(a_offset, 0.0), a_upright);" +
+                                        "  gl_Position.xy = (u_display * (u_transform * vec3(a_position, 1.0) + transformedOffset)).xy;" +
+                                        "  gl_Position.zw = vec2(0.0, 1.0);" +
+                                        "}";
+
+                                var fragmentSource =
+                                    "precision highp float;" +
+                                        "const vec3 COLOR = vec3(1.0, 0.0, 0.0);" +
+                                        "void main() {" +
+                                        "  gl_FragColor = vec4(COLOR, 1.0);" +
+                                        "}";
+
+                                var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+                                gl.shaderSource(vertexShader, vertexSource);
+                                gl.compileShader(vertexShader);
+                                var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+                                gl.shaderSource(fragmentShader, fragmentSource);
+                                gl.compileShader(fragmentShader);
+
+                                // Create the shader program.
+                                this.program = gl.createProgram();
+                                gl.attachShader(this.program, vertexShader);
+                                gl.attachShader(this.program, fragmentShader);
+
+                                // Bind attributes.
+                                gl.bindAttribLocation(this.program, this.aPosition, "a_position");
+                                gl.bindAttribLocation(this.program, this.aOffset, "a_offset");
+                                gl.bindAttribLocation(this.program, this.aTexcoord, "a_texcoord");
+                                gl.bindAttribLocation(this.program, this.aDistance, "a_distance");
+                                gl.bindAttribLocation(this.program, this.aUpright, "a_upright");
+
+                                // Link.
+                                gl.linkProgram(this.program);
+
+                                // Shader objects are not needed anymore.
+                                gl.deleteShader(vertexShader);
+                                gl.deleteShader(fragmentShader);
+
+                                // Retrieve uniform locations once and for all.
+                                this.uTransform = gl.getUniformLocation(
+                                    this.program,
+                                    "u_transform"
+                                );
+                                this.uRotation = gl.getUniformLocation(this.program, "u_rotation");
+                                this.uDisplay = gl.getUniformLocation(this.program, "u_display");
+
+                                // Create the vertex and index buffer. They are initially empty. We need to track the
+                                // size of the index buffer because we use indexed drawing.
+                                this.vertexBuffer = gl.createBuffer();
+                                this.indexBuffer = gl.createBuffer();
+
+                                // Number of indices in the index buffer.
+                                this.indexBufferSize = 0;
+
+                                // When certain conditions occur, we update the buffers and re-compute and re-encode
+                                // all the attributes. When buffer update occurs, we also take note of the current center
+                                // of the view state, and we reset a vector called `translationToCenter` to [0, 0], meaning that the
+                                // current center is the same as it was when the attributes were recomputed.
+                                this.centerAtLastUpdate = vec2.fromValues(
+                                    this.view.state.center[0],
+                                    this.view.state.center[1]
+                                );
+                            },
+
+                            // Called once a custom layer is removed from the map.layers collection and this layer view is destroyed.
+                            detach: function() {
+                                // Stop watching the `layer.source` collection.
+                                this.watcher.remove();
+
+                                var gl = this.context;
+
+                                // Delete buffers and programs.
+                                gl.deleteBuffer(this.vertexBuffer);
+                                gl.deleteBuffer(this.indexBuffer);
+                                gl.deleteProgram(this.program);
+                            },
+
+                            // Called every time a frame is rendered.
+                            render: function(renderParameters) {
+                                var gl = renderParameters.context;
+                                var state = renderParameters.state;
+
+                                // Update vertex positions. This may trigger an update of
+                                // the vertex coordinates contained in the vertex buffer.
+                                // There are three kinds of updates:
+                                //  - Modification of the layer.source collection ==> Buffer update
+                                //  - The view state becomes non-stationary ==> Only view update, no buffer update
+                                //  - The view state becomes stationary ==> Buffer update
+                                this.updatePositions(renderParameters);
+
+                                // If there is nothing to render we return.
+                                if (this.indexBufferSize === 0) {
+                                    return;
+                                }
+
+                                // Update view `transform` matrix; it converts from map units to pixels.
+                                mat3.identity(this.transform);
+                                this.screenTranslation[0] = (state.pixelRatio * state.size[0]) / 2;
+                                this.screenTranslation[1] = (state.pixelRatio * state.size[1]) / 2;
+                                mat3.translate(
+                                    this.transform,
+                                    this.transform,
+                                    this.screenTranslation
+                                );
+                                mat3.rotate(
+                                    this.transform,
+                                    this.transform,
+                                    (Math.PI * state.rotation) / 180
+                                );
+                                mat3.scale(this.transform, this.transform, [
+                                    state.pixelRatio / state.resolution,
+                                    -state.pixelRatio / state.resolution
+                                ]);
+                                mat3.translate(
+                                    this.transform,
+                                    this.transform,
+                                    this.translationToCenter
+                                );
+
+                                // Update view `rotate` matrix; it is the rotation component of the full `transform` matrix.
+                                mat3.identity(this.rotation);
+                                mat3.rotate(
+                                    this.rotation,
+                                    this.rotation,
+                                    (Math.PI * state.rotation) / 180
+                                );
+
+                                // Update view `display` matrix; it converts from pixels to normalized device coordinates.
+                                mat3.identity(this.display);
+                                mat3.translate(this.display, this.display, [-1, 1]);
+                                mat3.scale(this.display, this.display, [
+                                    2 / (state.pixelRatio * state.size[0]),
+                                    -2 / (state.pixelRatio * state.size[1])
+                                ]);
+
+                                // Draw.
+                                gl.useProgram(this.program);
+                                gl.uniformMatrix3fv(this.uTransform, false, this.transform);
+                                gl.uniformMatrix3fv(this.uRotation, false, this.rotation);
+                                gl.uniformMatrix3fv(this.uDisplay, false, this.display);
+                                gl.uniform1f(this.uCurrentTime, performance.now() / 1000.0);
+                                gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+                                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+                                gl.enableVertexAttribArray(this.aPosition);
+                                gl.enableVertexAttribArray(this.aOffset);
+                                gl.enableVertexAttribArray(this.aTexcoord);
+                                gl.enableVertexAttribArray(this.aDistance);
+                                gl.enableVertexAttribArray(this.aUpright);
+                                gl.vertexAttribPointer(this.aPosition, 2, gl.FLOAT, false, 32, 0);
+                                gl.vertexAttribPointer(this.aOffset, 2, gl.FLOAT, false, 32, 8);
+                                gl.vertexAttribPointer(this.aTexcoord, 2, gl.FLOAT, false, 32, 16);
+                                gl.vertexAttribPointer(this.aDistance, 1, gl.FLOAT, false, 32, 24);
+                                gl.vertexAttribPointer(this.aUpright, 1, gl.FLOAT, false, 32, 28);
+                                gl.enable(gl.BLEND);
+                                gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+                                gl.disable(gl.CULL_FACE);
+                                gl.drawElements(
+                                    gl.TRIANGLES,
+                                    this.indexBufferSize,
+                                    gl.UNSIGNED_SHORT,
+                                    0
+                                );
+
+                                // Request new render because markers are animated.
+                                this.requestRender();
+                            },
+
+                            hitTest: function(x, y) {
+                                // The map view.
+                                var view = this.view;
+
+                                if (this.layer.source.length === 0) {
+                                    // Nothing to do.
+                                    return promiseUtils.resolve(null);
+                                }
+
+                                // Compute screen distance between each graphic and the test point.
+                                var distances = this.layer.source.map(function(graphic) {
+                                    var graphicPoint = view.toScreen(graphic.geometry);
+                                    return Math.sqrt(
+                                        (graphicPoint.x - x) * (graphicPoint.x - x) +
+                                        (graphicPoint.y - y) * (graphicPoint.y - y)
+                                    );
+                                });
+
+                                // Find the minimum distance.
+                                var minIndex = 0;
+
+                                distances.forEach(function(distance, i) {
+                                    if (distance < distances.getItemAt(minIndex)) {
+                                        minIndex = i;
+                                    }
+                                });
+
+                                var minDistance = distances.getItemAt(minIndex);
+
+                                // If the minimum distance is more than 35 pixel then nothing was hit.
+                                if (minDistance > 5) {
+                                    return promiseUtils.resolve(null);
+                                }
+
+                                // Otherwise it is a hit; We set the layer as the source layer for the graphic
+                                // (required for the popup view to work) and we return a resolving promise to
+                                // the graphic.
+                                var graphic = this.layer.source.getItemAt(minIndex);
+                                graphic.sourceLayer = this.layer;
+                                return promiseUtils.resolve(graphic);
+                            },
+
+                            processGraphic: function(g) {
+                                switch (g.geometry.type) {
+                                    case "extent":
+                                        this.promises.push(
+                                            this.tessellateExtent(g.geometry).then(function(mesh) {
+                                                return {
+                                                    mesh: mesh,
+                                                    attributes: g.attributes,
+                                                    symbol: g.symbol
+                                                };
+                                            })
+                                        );
+                                        break;
+                                    case "point":
+                                        this.promises.push(
+                                            this.tessellatePoint(g.geometry, {
+                                                x:
+                                                    g.attributes && g.attributes.x != null
+                                                        ? g.attributes.x
+                                                        : -16,
+                                                y:
+                                                    g.attributes && g.attributes.y != null
+                                                        ? g.attributes.y
+                                                        : 16,
+                                                width:
+                                                    g.attributes && g.attributes.width != null
+                                                        ? g.attributes.width
+                                                        : 32,
+                                                height:
+                                                    g.attributes && g.attributes.height != null
+                                                        ? g.attributes.height
+                                                        : 32
+                                            }).then(function(mesh) {
+                                                return {
+                                                    mesh: mesh,
+                                                    attributes: g.attributes,
+                                                    symbol: g.symbol
+                                                };
+                                            })
+                                        );
+                                        break;
+                                    case "multipoint":
+                                        this.promises.push(
+                                            this.tessellateMultipoint(g.geometry, {
+                                                x:
+                                                    g.attributes && g.attributes.x != null
+                                                        ? g.attributes.x
+                                                        : -16,
+                                                y:
+                                                    g.attributes && g.attributes.y != null
+                                                        ? g.attributes.y
+                                                        : 16,
+                                                width:
+                                                    g.attributes && g.attributes.width != null
+                                                        ? g.attributes.width
+                                                        : 32,
+                                                height:
+                                                    g.attributes && g.attributes.height != null
+                                                        ? g.attributes.height
+                                                        : 32
+                                            }).then(function(mesh) {
+                                                return {
+                                                    mesh: mesh,
+                                                    attributes: g.attributes,
+                                                    symbol: g.symbol
+                                                };
+                                            })
+                                        );
+                                        break;
+                                    case "polyline":
+                                        this.promises.push(
+                                            this.tessellatePolyline(
+                                                g.geometry,
+                                                g.attributes && g.attributes.width != null
+                                                ? g.attributes.width
+                                                : 2
+                                            ).then(function(mesh) {
+                                                return {
+                                                    mesh: mesh,
+                                                    attributes: g.attributes,
+                                                    symbol: g.symbol
+                                                };
+                                            })
+                                        );
+                                        break;
+                                    case "polygon":
+                                        this.promises.push(
+                                            this.tessellatePolygon(g.geometry).then(function(mesh) {
+                                                return {
+                                                    mesh: mesh,
+                                                    attributes: g.attributes,
+                                                    symbol: g.symbol
+                                                };
+                                            })
+                                        );
+                                        break;
+                                }
+                            },
+
+                            // Called internally from render().
+                            updatePositions: function(renderParameters) {
+
+                                var gl = renderParameters.context;
+                                var stationary = renderParameters.stationary;
+                                var state = renderParameters.state;
+
+                                // If we are not stationary we simply update the `translationToCenter` vector.
+                                if (!stationary) {
+                                    vec2.sub(
+                                        this.translationToCenter,
+                                        this.centerAtLastUpdate,
+                                        state.center
+                                    );
+                                    this.requestRender();
+                                    return;
+                                }
+
+                                // If we are stationary, the `layer.source` collection has not changed, and
+                                // we are centered on the `centerAtLastUpdate`, we do nothing.
+                                if (
+                                    !this.needsUpdate &&
+                                        this.translationToCenter[0] === 0 &&
+                                        this.translationToCenter[1] === 0
+                                ) {
+                                    return;
+                                }
+
+                                // Otherwise, we record the new encoded center, which imply a reset of the `translationToCenter` vector,
+                                // we record the update time, and we proceed to update the buffers.
+                                this.centerAtLastUpdate.set(state.center);
+                                this.translationToCenter[0] = 0;
+                                this.translationToCenter[1] = 0;
+                                this.needsUpdate = false;
+
+                                // Generate vertex data.
+                                var vertexCount = this.meshes.reduce(function(vertexCount, item) {
+                                    return vertexCount + item.mesh.vertices.length;
+                                }, 0);
+                                var indexCount = this.meshes.reduce(function(indexCount, item) {
+                                    return indexCount + item.mesh.indices.length;
+                                }, 0);
+                                var vertexData = new Float32Array(vertexCount * 8);
+                                var indexData = new Uint16Array(indexCount);
+                                var currentVertex = 0;
+                                var currentIndex = 0;
+
+                                for (
+                                    var meshIndex = 0;
+                                    meshIndex < this.meshes.length;
+                                    ++meshIndex
+                                ) {
+                                    var item = this.meshes[meshIndex];
+                                    var mesh = item.mesh;
+                                    var upright = item.attributes && item.attributes.upright ? 1 : 0;
+
+                                    for (var i = 0; i < mesh.indices.length; ++i) {
+                                        var idx = mesh.indices[i];
+                                        indexData[currentIndex] = currentVertex + idx;
+                                        currentIndex++;
+                                    }
+
+                                    for (var i = 0; i < mesh.vertices.length; ++i) {
+                                        var v = mesh.vertices[i];
+                                        vertexData[currentVertex * 8 + 0] =
+                                            v.x - this.centerAtLastUpdate[0];
+                                        vertexData[currentVertex * 8 + 1] =
+                                            v.y - this.centerAtLastUpdate[1];
+                                        vertexData[currentVertex * 8 + 2] = v.xOffset;
+                                        vertexData[currentVertex * 8 + 3] = v.yOffset;
+                                        vertexData[currentVertex * 8 + 4] = v.uTexcoord;
+                                        vertexData[currentVertex * 8 + 5] = v.vTexcoord;
+                                        vertexData[currentVertex * 8 + 6] = v.distance;
+                                        vertexData[currentVertex * 8 + 7] = upright;
+                                        currentVertex++;
+                                    }
+                                }
+
+                                // Upload data to the GPU
+                                gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+                                gl.bufferData(gl.ARRAY_BUFFER, vertexData, gl.STATIC_DRAW);
+                                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+                                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
+
+                                // Record number of indices.
+                                this.indexBufferSize = indexCount;
+                            }
+                        });
+
+                        var CustomLayer = FeatureLayer.createSubclass({
+                            createLayerView: function(view) {
+                                if (view.type === "2d") {
+                                    return new CustomLayerView2D({
+                                        view: view,
+                                        layer: this
+                                    });
+                                }
+                                return null;
+                            }
+                        });
+
+                        const wellLocationsLayer1 = new CustomLayer({
+                            copyright: "https://trmcnealy.github.io",
+                            title: "Well Locations",
+                            fields: [
+                                {
+                                    name: "ObjectID",
+                                    alias: "ObjectID",
+                                    type: "oid"
+                                },
+                                {
+                                    name: "Api",
+                                    alias: "Api",
+                                    type: "string"
+                                }
+                            ],
+                            outFields: ["*"],
+                            objectIdField: "ObjectID",
+                            geometryType: "polyline",
+                            spatialReference: @Html.Raw(Model.SpatialReference),
+                            source: response,
+                            popupTemplate: {
+                                title: "Well - {Api}",
+                                content: [
+                                    {
+                                        type: "fields",
+                                        fieldInfos: [
+                                            {
+                                                fieldName: "Api",
+                                                label: "Api"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        });
+
+                        //map.add(wellLocationsLayer1);
+
+                        const wellLocationsLayer = new FeatureLayer({
+                            copyright: "https://trmcnealy.github.io",
+                            title: "Well Locations",
+                            fields: [
+                                {
+                                    name: "ObjectID",
+                                    alias: "ObjectID",
+                                    type: "oid"
+                                },
+                                {
+                                    name: "Api",
+                                    alias: "Api",
+                                    type: "string"
+                                }
+                            ],
+                            outFields: ["*"],
+                            objectIdField: "ObjectID",
+                            geometryType: "polyline",
+                            spatialReference: @Html.Raw(Model.SpatialReference),
+                            source: response,
+                            popupTemplate: {
+                                title: "Well - {Api}",
+                                content: [
+                                    {
+                                        type: "fields",
+                                        fieldInfos: [
+                                            {
+                                                fieldName: "Api",
+                                                label: "Api"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            renderer: {
+                                type: "simple",
+                                symbol: {
+                                    type: "simple-line",
+                                    color: [226, 15, 15],
+                                    width: 1
+                                }
+                            }
+                        });*@
+
+                        //map.add(wellLocationsLayer);
+
+                        GetVariable("WellData").then((wellData) => {
+
+                            const reservoirDepthLayer = new FeatureLayer({
+                                copyright: "https://trmcnealy.github.io",
+                                title: "Reservoir Depth",
+                                fields: [
+                                    {
+                                        name: "ObjectID",
+                                        alias: "ObjectID",
+                                        type: "oid"
+                                    },
+                                    {
+                                        name: "Api",
+                                        alias: "Api",
+                                        type: "string"
+                                    },
+                                    {
+                                        name: "ReservoirDepth",
+                                        alias: "ReservoirDepth",
+                                        type: "double"
+                                    }
+                                ],
+                                outFields: ["*"],
+                                objectIdField: "ObjectID",
+                                geometryType: "point",
+                                "spatialReference": @Html.Raw(Model.SpatialReference),
+                                source: wellData,
+                                popupTemplate: {
+                                    title: "Well - {Api}",
+                                    content: [
+                                        {
+                                            type: "fields",
+                                            fieldInfos: [
+                                                {
+                                                    fieldName: "Api",
+                                                    label: "Api"
+                                                },
+                                                {
+                                                    fieldName: "ReservoirName",
+                                                    label: "Reservoir Name"
+                                                },
+                                                {
+                                                    fieldName: "ReservoirDepth",
+                                                    label: "Reservoir Depth"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                renderer: {
+                                    label: "Reservoir Depth",
+                                    type: "simple",
+                                    symbol: {
+                                        type: "simple-marker",
+                                        size: 9,
+                                        color: [227, 15, 15, 0.8],
+                                        outline: {
+                                            color: [255, 255, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    visualVariables: [
+                                        {
+                                            type: "size",
+                                            field: "ReservoirDepth",
+                                            stops: [
+                                                { value: 5000.0, size: 5, label: "< 5000ft" },
+                                                { value: 10000.0, size: 10, label: "5000ft < 10000ft" },
+                                                { value: 15000.0, size: 15, label: "10000ft < 15000ft" },
+                                                { value: 20000.0, size: 20, label: "15000ft < 20000ft" }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            });
+
+                            const gasSpecificGravityLayer = new FeatureLayer({
+                                copyright: "https://trmcnealy.github.io",
+                                title: "Gas Specific Gravity",
+                                fields: [
+                                    {
+                                        name: "ObjectID",
+                                        alias: "ObjectID",
+                                        type: "oid"
+                                    },
+                                    {
+                                        name: "Api",
+                                        alias: "Api",
+                                        type: "string"
+                                    },
+                                    {
+                                        name: "GasSpecificGravity",
+                                        alias: "GasSpecificGravity",
+                                        type: "double"
+                                    }
+                                ],
+                                outFields: ["*"],
+                                objectIdField: "ObjectID",
+                                geometryType: "point",
+                                "spatialReference": @Html.Raw(Model.SpatialReference),
+                                source: wellData,
+                                popupTemplate: {
+                                    title: "Well - {Api}",
+                                    content: [
+                                        {
+                                            type: "fields",
+                                            fieldInfos: [
+                                                {
+                                                    fieldName: "Api",
+                                                    label: "Api"
+                                                },
+                                                {
+                                                    fieldName: "ReservoirName",
+                                                    label: "Reservoir Name"
+                                                },
+                                                {
+                                                    fieldName: "GasSpecificGravity",
+                                                    label: "Gas Specific Gravity"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                renderer: {
+                                    label: "Gas Specific Gravity",
+                                    type: "simple",
+                                    symbol: {
+                                        type: "simple-marker",
+                                        size: 9,
+                                        color: [227, 15, 15, 0.8],
+                                        outline: {
+                                            color: [255, 255, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    visualVariables: [
+                                        {
+                                            type: "color",
+                                            field: "GasSpecificGravity",
+                                            stops: colorMethods.Gradient("#ffff00", "#ff0000", 8, 0.5, 1.0)
+                                        }
+                                    ]
+                                }
+                            });
+
+                            const oilApiGravityLayer = new FeatureLayer({
+                                copyright: "https://trmcnealy.github.io",
+                                title: "Oil Api Gravity",
+                                fields: [
+                                    {
+                                        name: "ObjectID",
+                                        alias: "ObjectID",
+                                        type: "oid"
+                                    },
+                                    {
+                                        name: "Api",
+                                        alias: "Api",
+                                        type: "string"
+                                    },
+                                    {
+                                        name: "OilApiGravity",
+                                        alias: "OilApiGravity",
+                                        type: "double"
+                                    }
+                                ],
+                                objectIdField: "ObjectID",
+                                geometryType: "point",
+                                "spatialReference": @Html.Raw(Model.SpatialReference),
+                                source: wellData,
+                                popupTemplate: {
+                                    title: "Well - {Api}",
+                                    content: [
+                                        {
+                                            type: "fields",
+                                            fieldInfos: [
+                                                {
+                                                    fieldName: "Api",
+                                                    label: "Api"
+                                                },
+                                                {
+                                                    fieldName: "ReservoirName",
+                                                    label: "Reservoir Name"
+                                                },
+                                                {
+                                                    fieldName: "OilApiGravity",
+                                                    label: "Oil Api Gravity"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                renderer: {
+                                    label: "Oil Api Gravity",
+                                    type: "simple",
+                                    symbol: {
+                                        type: "simple-marker",
+                                        size: 9,
+                                        color: [227, 15, 15, 0.8],
+                                        outline: {
+                                            color: [255, 255, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    visualVariables: [
+                                        {
+                                            type: "color",
+                                            field: "OilApiGravity",
+                                            stops: colorMethods.Gradient("#00ff00", "#ffff00", 8, 10.0, 70.0)
+                                        }
+                                    ]
+                                }
+                            });
+
+                            window.createColorSliderHistogram(map, oilApiGravityLayer, "Blue and Red 10", "OilApiGravity", [{ value: 10, label: "Black Oil" }, { value: 60, label: "Condensate" }], 60);
+
+                            wellDataLayer = new GroupLayer({
+                                title: "Well Propertes",
+                                visible: true,
+                                visibilityMode: "exclusive",
+                                layers: [reservoirDepthLayer, gasSpecificGravityLayer, oilApiGravityLayer],
+                                opacity: 1.0
+                            });
+
+                            map.add(wellDataLayer);
+
+                            window.addLayerList(view, "bottom-left");
+
+                        });
+                    });
+
+                    //esri-view
+                    //esri-view-root
+                    //esri-view-surface
+                    //canvas
+
+                    //view.ui.container.value = window.wrapREGL({
+                    //    canvas: view.ui.container,
+                    //    pixelRatio: devicePixelRatio
+                    //    //extensions: ['oes_standard_derivatives']
+                    //});
+
+                    if (wellDataLayer !== undefined) {
+
+                        view.whenLayerView(wellDataLayer).then(function(featureLayerView) {
+
+                            //let selectedFeature;
+                            //let id;
+                            //const features = [];
+
+                            //const appContainer = document.getElementById("main");
+                            //const tableContainer = document.getElementById("tableContainer");
+                            //const tableDiv = document.getElementById("tableDiv");
+
+                            //console.log(appContainer);
+
+                            //const featureTable = new FeatureTable({
+                            //    view: view,
+                            //    layer: wellDataLayer,
+                            //    container: tableDiv,
+                            //    fieldConfigs: [
+                            //        {
+                            //            fieldName: "Api",
+                            //            label: "Api",
+                            //            direction: "asc"
+                            //        },
+                            //        {
+                            //            fieldName: "ReservoirDepth",
+                            //            label: "Reservoir Depth"
+                            //        },
+                            //        {
+                            //            fieldName: "GasSpecificGravity",
+                            //            label: "Gas Specific Gravity"
+                            //        },
+                            //        {
+                            //            fieldName: "OilApiGravity",
+                            //            label: "Oil Api Gravity"
+                            //        }
+                            //    ]
+                            //});
+
+                            //view.ui.add(appContainer, "bottom-right");
+
+                            //featureTable.on("selection-change", function(changes) {
+
+                            //    changes.removed.forEach(function(item) {
+                            //        const data = features.find(function(data) {
+                            //            return data.feature === item.feature;
+                            //        });
+                            //    });
+
+                            //    changes.added.forEach(function(item) {
+                            //        const feature = item.feature;
+                            //        features.push({
+                            //            feature: feature
+                            //        });
+
+                            //        if (
+                            //            feature.attributes.ObjectID !== id &&
+                            //                view.popup.visible === true
+                            //        ) {
+                            //            featureTable.deselectRows(selectedFeature);
+                            //            view.popup.close();
+                            //        }
+                            //    });
+                            //});
+
+                            //watchUtils.watch(view.popup, "visible", (graphic) => {
+                            //    selectedFeature = view.popup.selectedFeature;
+                            //    if (selectedFeature !== null && view.popup.visible !== false) {
+                            //        featureTable.clearSelection();
+                            //        featureTable.selectRows(view.popup.selectedFeature);
+                            //        id = selectedFeature.getObjectId();
+                            //    }
+                            //});
+
+                        });
+                    }
+
+                });
+
+            },
+            false);
+
+        //createFilter(containerId, containerId, ["GasSpecificGravity", "OilApiGravity", "ReservoirDepth"], featureLayerView);
+
+        //var esriViewCanvas = document.getElementById(containerId).firstChild.firstChild.firstChild;
+
+        //const contours = window.d3.select(esriViewCanvas);
+
+        //for (const threshold of linspace(0.25, 1.5, 10)) {
+
+        //    yield contours.contour(data.values, threshold);
+        //}
+
+        //const attributeElement = document.getElementById(`${containerId}-filter`);
+
+        //attributeElement.style.visibility = "visible";
+
+        //const attributeExpand = new Expand({
+        //    view: view,
+        //    content: attributeElement,
+        //    expandIconClass: "esri-icon-filter",
+        //    group: "top-left"
+        //});
+
+        //attributeExpand.watch("expanded",
+        //    function() {
+        //        if (!attributeExpand.expanded) {
+        //            featureLayerView.filter = null;
+        //        }
+        //    });
+
+        //view.ui.add(attributeExpand, "bottom-right");
+
+    </script>
+    <script>
+
+        //https://developers.arcgis.com/javascript/3/jsapi/interpolatepoints-amd.html
+
+        require([
+            "esri/widgets/Legend",
+            "esri/widgets/Expand",
+            "esri/widgets/Fullscreen",
+            "esri/widgets/Home",
+            "esri/widgets/LayerList",
+            "esri/smartMapping/renderers/color",
+            "esri/smartMapping/symbology/color",
+            "esri/smartMapping/statistics/histogram",
+            "esri/widgets/smartMapping/ColorSlider",
+            "esri/Color",
+            "esri/intl"
+        ], function(
+               Legend,
+               Expand,
+               Fullscreen,
+               Home,
+               LayerList,
+               colorRendererCreator,
+               colorSymbology,
+               histogram,
+               ColorSlider,
+               Color,
+               intl
+           ) {
+
+            window.createSymbol = function(color, size) {
+                return {
+                    type: "simple-marker",
+                    color: color,
+                    size: size,
+                    outline: {
+                        width: 0.5,
+                        color: [0, 0, 0, 0.2]
+                    }
+                };
+            };
+
+            window.createFilter = function(parent, viewId, attributes, layerView) {
+
+                const parentElement = document.getElementById(parent);
+
+                var element = document.createElement("div");
+
+                element.setAttribute("id", `"${viewId}-filter"`);
+                element.setAttribute("class", "esri-widget");
+
+                attributes.forEach(attributeName => {
+
+                    var child_element = document.createElement("div");
+
+                    child_element.setAttribute("class", `"${viewId}-filter-item ${viewId}-visible"`);
+
+                    child_element.setAttribute(`data-${viewId}`, `"${attributeName}"`);
+
+                    child_element.innerText = attributeName;
+
+                    child_element.addEventListener("click", function(event) {
+
+                        const selectedAttribute = event.target.getAttribute(`data-${viewId}`);
+
+                        layerView.filter = {
+                            where: `Attribute = '${selectedAttribute}'`
+                        };
+
+                    });
+
+                    element.appendChild(child_element);
+
+                });
+                //<div class="season-item visible-season" data-season="Winter">Winter</div>
+
+                parentElement.appendChild(element);
+
+                //featureLayerView.filter = new FeatureFilter({
+                //    where: "percentile >= 30",
+                //    geometry: filterPolygon,
+                //    spatialRelationship: "contains",
+                //    distance: 10,
+                //    units: "miles"
+                //});
+            };
+
+            //Fullscreen Button
+            window.addFullscreenButton = function(viewContainerId, mapView, location) {
+
+                const fullscreenDiv = document.getElementById(`${viewContainerId}`);
+                const fullscreen = new Fullscreen({
+                    view: mapView,
+                    element: fullscreenDiv
+                });
+                mapView.ui.add(fullscreen, location);
+
+                return fullscreen;
+            };
+
+            //Home Button
+            window.addHomeButton = function(mapView, location) {
+
+                const home = new Home({
+                    view: mapView
+                });
+                mapView.ui.add(home, location);
+
+                return home;
+            };
+
+            //Legend
+            window.addLegendButton = function(mapView, location) {
+
+                const legend = new Expand({
+                    content: new Legend({
+                        view: mapView,
+                        style: "card"
+                    }),
+                    view: mapView,
+                    expanded: false
+                });
+                mapView.ui.add(legend, location);
+
+                return legend;
+            };
+
+            //LayerList
+            window.addLayerList = function(mapView, location) {
+
+                const layerList = new Expand({
+                    content: new LayerList({
+                        view: mapView,
+                        listItemCreatedFunction: function(event) {
+                            const item = event.item;
+                            if (item.layer.type !== "group") {
+
+                                item.panel = {
+                                    content: "legend",
+                                    open: true
+                                };
+                            }
+                        }
+                    }),
+                    view: mapView,
+                    expanded: false
+                });
+
+                mapView.ui.add(layerList, location);
+
+                return layerList;
+            };
+
+            window.getColorFromValue = function(stops, value) {
+                let minStop = stops[0];
+                let maxStop = stops[stops.length - 1];
+
+                const minStopValue = minStop.value;
+                const maxStopValue = maxStop.value;
+
+                if (value < minStopValue) {
+                    return minStop.color;
+                }
+
+                if (value > maxStopValue) {
+                    return maxStop.color;
+                }
+
+                const exactMatches = stops.filter(function(stop) {
+                    return stop.value === value;
+                });
+
+                if (exactMatches.length > 0) {
+                    return exactMatches[0].color;
+                }
+
+                minStop = null;
+                maxStop = null;
+
+                stops.forEach(function(stop, i) {
+                    if (!minStop && !maxStop && stop.value >= value) {
+                        minStop = stops[i - 1];
+                        maxStop = stop;
+                    }
+                });
+
+                const weightedPosition = (value - minStop.value) / (maxStop.value - minStop.value);
+
+                return Color.blendColors(minStop.color, maxStop.color, weightedPosition);
+            };
+
+            window.addSelectionTool = function(mapView, layer, tableFields, location) {};
+
+            //view.on("key-down", function(event) {
+
+            //    var prohibitedKeys = ["+", "-", "Shift", "_", "="];
+
+            //    var keyPressed = event.key;
+
+            //    if (prohibitedKeys.indexOf(keyPressed) !== -1) {
+            //        event.stopPropagation();
+            //    }
+
+            //});
+
+            //dataLinesJson: [{value: 83500,label: "HUD low income"},{value: 25750,label: "Fed poverty line"}]
+            //colorSchemeName: "Blue and Red 10"
+            //numOfBins: 60
+            window.createColorSliderHistogram = function(map, layer, colorSchemeName, fieldName, dataLinesJson, numOfBins) {
+
+                const bars = [];
+                let rendererResult = null;
+                let vv = null;
+
+                const colorScheme = colorSymbology.getSchemeByName({
+                    basemap: map.basemap,
+                    geometryType: "point",
+                    theme: "above-and-below",
+                    name: `${colorSchemeName}`
+                });
+
+                const colorParams = {
+                    layer: layer,
+                    field: fieldName,
+                    theme: "above-and-below",
+                    colorScheme: colorScheme,
+                    outlineOptimizationEnabled: true
+                };
+
+                colorRendererCreator.createContinuousRenderer(colorParams).then(function(response) {
+                        rendererResult = response;
+                        vv = rendererResult.visualVariable;
+                        layer.render = response.renderer;
+                        layer.visible = true;
+
+                        return histogram({
+                            layer: colorParams.layer,
+                            field: colorParams.field,
+                            numBins: numOfBins
+                        });
+
+                    }).then(function(histogramResult) {
+
+                        const slider = ColorSlider.fromRendererResult(
+                            rendererResult,
+                            histogramResult
+                        );
+
+                        slider.histogramConfig.average = null;
+                        slider.histogramConfig.standardDeviation = null;
+
+                        slider.histogramConfig.barCreatedFunction = function(index, element) {
+                            const bin = histogramResult.bins[index];
+
+                            const midValue = (bin.maxValue - bin.minValue) / 2 + bin.minValue;
+
+                            const color = window.getColorFromValue(vv.stops, midValue);
+
+                            element.setAttribute("fill", color.toHex());
+
+                            bars.push(element);
+                        };
+
+                        console.log(dataLinesJson);
+
+                        slider.histogramConfig.dataLines = dataLinesJson;
+
+                        slider.viewModel.precision = 2;
+
+                        slider.on(
+                            ["thumb-change", "thumb-drag", "min-change", "max-change"],
+                            function() {
+                                const renderer = layer.renderer.clone();
+                                const colorVariable = renderer.visualVariables[0].clone();
+                                colorVariable.stops = slider.stops;
+                                renderer.visualVariables = [colorVariable];
+                                layer.renderer = renderer;
+
+                                bars.forEach(function(bar, index) {
+                                    const bin = slider.histogramConfig.bins[index];
+                                    const midValue = (bin.maxValue - bin.minValue) / 2 + bin.minValue;
+                                    const color = window.getColorFromValue(slider.stops, midValue);
+                                    bar.setAttribute("fill", color.toHex());
+                                });
+                            }
+                        );
+
+                    })
+                    .catch(function(error) {
+                        console.log("there was an error: ", error);
+                    });
+
+            };
+
+            window.dispatchEvent(LoadMapEvent);
+
+        });
+
+        //const rainbow = ["#CE0C82", "#800CCE", "#1F0CCE", "#0C5BCE", "#0C99CE", "#2ECE0C", "#BAE806", "#FEFF00", "#FFCD00", "#FF9A00", "#FF6000", "#FF0000"];
+
+        //SetVariable("test", { prop: true }).then((response) => {
+        //    console.log(response);
+        //});
+
+        //GetVariable("test").then((response) => {
+        //    console.log(response);
+        //});
+
+        //(async () => {
+        //})();
+
+        //var regl = createREGL()
+
+        //regl.frame(function () {
+        //    regl.clear({
+        //        color: [0, 0, 0, 1]
+        //    })
+        //})
+    </script>
+}

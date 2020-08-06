@@ -1,0 +1,180 @@
+﻿@page "/Plotly"
+@model PlotlyModel
+@{ ViewData["Title"] = "Plotly App"; }
+<div id="plotlyDiv" class="plotlyView" style="height: 100%; margin: 0; padding: 0; width: 100%;"></div>
+
+@section Scripts {
+    <script>
+        loadPlotly = {};
+
+        const plotlyContainerId = "plotlyDiv";
+
+        if (typeof (Plotly) === typeof (undefined)) {
+
+            const plotlyScript = createHtmlElement({
+                tag: "script",
+                type: "text/javascript",
+                src: "https://cdn.plot.ly/plotly-latest.min.js",
+                onload: "loadPlotly()",
+                location: document.head
+            });
+
+            const mapboxScript = createHtmlElement({
+                tag: "script",
+                type: "text/javascript",
+                src: "https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js",
+                location: document.head
+            });
+
+            const mapboxStyle = createHtmlElement({
+                tag: "link",
+                rel: "stylesheet",
+                href: "https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css",
+                location: document.head
+            });
+
+        } else {
+            //loadPlotly();
+        }
+
+        function createMarker(options) {
+            const scl = [
+                [0, 'rgb(150,0,90)'],
+                [0.125, 'rgb(0, 0, 200)'],
+                [0.25, 'rgb(0, 25, 255)'],
+                [0.375, 'rgb(0, 152, 255)'],
+                [0.5, 'rgb(44, 255, 150)'],
+                [0.625, 'rgb(151, 255, 0)'],
+                [0.75, 'rgb(255, 234, 0)'],
+                [0.875, 'rgb(255, 111, 0)'],
+                [1, 'rgb(255, 0, 0)']
+            ];
+            return {
+                color: unpack(rows, 'Globvalue'),
+                colorscale: scl,
+                cmin: 0,
+                cmax: 1.4,
+                reversescale: true,
+                opacity: 0.5,
+                size: 3,
+                colorbar: {
+                    thickness: 10,
+                    titleside: 'right',
+                    outlinecolor: 'rgba(68,68,68,0)',
+                    ticks: 'outside',
+                    ticklen: 3,
+                    shoticksuffix: 'last',
+                    ticksuffix: 'inches',
+                    dtick: 0.1
+                }
+            };
+        }
+
+        loadPlotly = async function() {
+
+            return await Promise.resolve(
+                Plotly.d3.json(GetVariableUrl("PlotlyData"), (err, jsonData) => {
+
+                        if (err != null) {
+                            console.error(err);
+                        }
+
+                        //Point
+                        //const data = [
+                        //    {
+                        //        type: "scattermapbox",
+                        //        text: jsonData.text.map(f => `API: ${f}`),
+                        //        lon: jsonData.lon,
+                        //        lat: jsonData.lat,
+                        //        mode: 'markers',
+                        //        marker: {
+                        //            color: 'rgba(255,0,0,255)',
+                        //            size: 3
+                        //        }
+                        //    }
+                        //];
+
+                        const data = {
+                            "type": "scattermapbox",
+                            "text": "API: 42-057-31651-00-00",
+                            "mode": "lines",
+                            "lon": [
+                                -96.68097198,
+                                -96.68097198
+                            ],
+                            "lat": [
+                                28.36622676,
+                                28.36622676
+                            ],
+                            "opacity": 1,
+                            "line": {
+                                "width": 2,
+                                "color": "rgba(255,0,0,255)"
+                            }
+                        };
+                        
+                    console.log(jsonData[0]);
+                        
+                        window.localStorage.setItem("PlotlyData", jsonData);
+
+                    console.log(window.localStorage.PlotlyData[0]);
+
+                        const layout = {
+                            dragmode: "zoom",
+                            mapbox:
+                            {
+                                style: "dark",
+                                center:
+                                {
+                                    lat: 31.64,
+                                    lon: -99.33
+                                },
+                                zoom: 6
+                            },
+                            margin:
+                            {
+                                r: 0,
+                                t: 0,
+                                b: 0,
+                                l: 0
+                            },
+                            showlegend: true
+                        };
+
+                        const config = {
+                            mapboxAccessToken: "pk.eyJ1IjoidHJtY25lYWx5IiwiYSI6ImNrZDN3aGNvMzBxNjQycW16Zml2M2UwZmcifQ.aT8sIrXsA2pHPSjw_U-fUA"
+                        };
+
+
+                        @*mapboxgl.prewarm()
+                    mapboxgl.clearPrewarmedResources()*@
+
+
+                    Plotly.newPlot(plotlyContainerId, window.localStorage.PlotlyData, layout, config);
+
+                        //const fps = new FrameRateControl({
+                        //    background: "rgba(0, 0, 0, 0.1)",
+                        //    barWidth: 4 * window.devicePixelRatio,
+                        //    color: "#7cf859",
+                        //    graphHeight: 60 * window.devicePixelRatio,
+                        //    graphWidth: 90 * window.devicePixelRatio,
+                        //    graphTop: 0,
+                        //    graphRight: 5 * window.devicePixelRatio,
+                        //    width: 100 * window.devicePixelRatio
+                        //});
+
+                        var topRightControl = createHtmlElement({
+                            tag: "div",
+                            class: "mapboxgl-ctrl-top-right",
+                            location: document.body
+                        });
+
+                        //map.addControl(fps);
+
+                    }
+                )
+            );
+        }
+
+    </script>
+}

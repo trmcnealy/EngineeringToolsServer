@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json.schemastore.org/tsconfig",
+
+    "compilerOptions": {
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "target": "es5",
+        "lib": [
+            "es5",
+            "scripthost",
+            "es2015.collection",
+            "es2015.promise",
+            "es2015.iterable",
+            "dom"
+        ],
+        "outDir": "build",
+        "rootDirs": [ "src" ],
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+        "declaration": true,
+        "sourceMap": true,
+        "declarationMap": true,
+        "inlineSources": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "strictNullChecks": false,
+        "noUnusedLocals": false,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "types": []
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
+    "exclude": [
+        "node_modules",
+        "lib"
+    ]
+}
