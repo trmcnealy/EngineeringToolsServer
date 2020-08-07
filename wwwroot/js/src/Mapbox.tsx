@@ -39,7 +39,7 @@ export interface MapboxProperties {
     BaseMapStyle: string;
     Center?: mapboxgl.LngLat;
     Zoom?: number;
-    Bounds?: mapboxgl.LngLatBounds;
+    Bounds?: mapboxgl.LngLatBoundsLike;
 }
 
 export interface MapboxState {
@@ -65,7 +65,7 @@ export class Mapbox extends React.Component<MapboxProperties, MapboxState> {
 
         Center: null,
         Zoom: null,
-        Bounds: new mapboxgl.LngLatBounds([[-106.52775578, 25.85656136], [-93.53154648, 36.49897217]])
+        Bounds:[[-106.52775578, 25.85656136], [-93.53154648, 36.49897217]]
     };
 
     static defaultState: MapboxState = {
@@ -80,12 +80,12 @@ export class Mapbox extends React.Component<MapboxProperties, MapboxState> {
         ShowFrameRateControl: true,
         FrameRateControlLocation: "top-right"
     };
-    
-    @property() DataEvent: EventSource | null;
+
+    @property() DataEvent: EventSource;
 
     @property() ElementRef: React.RefObject<HTMLDivElement>;
 
-    @property() Map?: mapboxgl.Map;
+    @property() Map: mapboxgl.Map;
 
     constructor(properties: MapboxProperties) {
         super(properties);
@@ -154,63 +154,64 @@ export class Mapbox extends React.Component<MapboxProperties, MapboxState> {
         return `${rootUrl}/data/${variable}`;
     }
 
-    Initialize(): void {
+    static Initialize(map: mapboxgl.Map, state: MapboxState): void {
+        //map.addControl(new MapboxControls(), "bottom-left");
 
-        this.Map.addControl(new MapboxControls(), "bottom-left");
-
-        if (this.state.ShowNavigationControl) {
-            this.Map.addControl(
+        if (state.ShowNavigationControl) {
+            map.addControl(
                 new mapboxgl.NavigationControl({
                     showCompass: false
                 }),
-                this.state.NavigationControlLocation
+                state.NavigationControlLocation
             );
         }
-        if (this.state.ShowFullscreenControl) {
-            this.Map.addControl(new mapboxgl.FullscreenControl(), this.state.FullscreenControlLocation);
+        if (state.ShowFullscreenControl) {
+            map.addControl(new mapboxgl.FullscreenControl(), state.FullscreenControlLocation);
         }
-        if (this.state.ShowFrameRateControl) {
-            Mapbox.AddFrameRateControl(this.Map, this.state.FrameRateControlLocation);
+        if (state.ShowFrameRateControl) {
+            Mapbox.AddFrameRateControl(map, state.FrameRateControlLocation);
         }
 
-        this.DisableUnwantedControls();
+        Mapbox.DisableUnwantedControls(map);
     }
 
-    AddMousePointer(layerId: string): void {
-        this.Map.on("mouseenter", layerId, () => {
-            this.Map.getCanvas().style.cursor = "pointer";
+    static AddMousePointer(map: mapboxgl.Map, layerId: string): void {
+        map.on("mouseenter", layerId, () => {
+            map.getCanvas().style.cursor = "pointer";
         });
 
-        this.Map.on("mouseleave", layerId, () => {
-            this.Map.getCanvas().style.cursor = "";
+        map.on("mouseleave", layerId, () => {
+            map.getCanvas().style.cursor = "";
         });
     }
 
-    DisableUnwantedControls(): void {
-        this.Map.dragRotate.disable();
-        this.Map.touchZoomRotate.disableRotation();
-        this.Map.boxZoom.disable();
+    static DisableUnwantedControls(map: mapboxgl.Map): void {
+        map.dragRotate.disable();
+        map.touchZoomRotate.disableRotation();
+        map.boxZoom.disable();
     }
 
     shouldComponentUpdate?(nextProps: Readonly<MapboxProperties>, nextState: Readonly<MapboxState>, nextContext: any): boolean {
-        console.log("Mapbox:shouldComponentUpdate");
+        //console.log("Mapbox:shouldComponentUpdate");
         this.Map.resize();
         return true;
     }
 
     componentDidMount?(): void {
-        this.setState({mounted: true});
-
+        //console.log(this);
         this.Map = new mapboxgl.Map({
             container: this.ElementRef.current,
-            style: "mapbox://styles/mapbox/streets-v9",
-            center: [-99.33, 31.64],
-            zoom: 6
+            style: this.props.BaseMapStyle,
+            bounds: this.props.Bounds
+            //center: this.props.Center,
+            //zoom: this.props.Zoom,
         });
 
-        this.Initialize();
+        Mapbox.Initialize(this.Map, this.state);
 
         this.removeStupidShit();
+
+        this.setState({mounted: true});
     }
 
     componentWillUnmount?(): void {
@@ -221,10 +222,13 @@ export class Mapbox extends React.Component<MapboxProperties, MapboxState> {
 
     render() {
         return (
-            <div className="mapboxContainer">
                 <div className="mapboxDiv" ref={this.ElementRef} />
-            </div>
         );
+        //return (
+        //    <div className="mapboxContainer">
+        //        <div className="mapboxDiv" ref={this.ElementRef} />
+        //    </div>
+        //);
     }
 
     removeStupidShit() {

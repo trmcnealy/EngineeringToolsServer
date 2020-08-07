@@ -28,8 +28,11 @@ export default class MapboxControls extends React.Component implements mapboxgl.
 
     @property() Map: mapboxgl.Map;
 
-    constructor() {
-        super({});
+    constructor(props = null) {
+        super(props);
+
+        this.onAdd = this.onAdd.bind(this);
+        this.onRemove = this.onRemove.bind(this);
     }
 
     initialize(): void {

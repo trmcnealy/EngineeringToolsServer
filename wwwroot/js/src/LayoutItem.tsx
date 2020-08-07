@@ -33,7 +33,7 @@ import {LayoutItemHeaderProperties} from "./LayoutItemHeaderProperties";
 export interface LayoutItemProperties<TComponentProperties={}> {
     LayoutProperties: ReactGridLayout.Layout;
     HeaderProperties: LayoutItemHeaderProperties;
-    ComponentProperties?: TComponentProperties;
+    ComponentProperties: TComponentProperties;
 }
 
 export abstract class LayoutItem<TComponentProperties={}> extends React.Component<LayoutItemProperties<TComponentProperties>> {
@@ -63,7 +63,7 @@ export abstract class LayoutItem<TComponentProperties={}> extends React.Componen
 export interface PanelProperties<TComponentProperties=any> {
     LayoutProperties: ReactGridLayout.Layout;
     HeaderProperties: LayoutItemHeaderProperties;
-    ComponentProperties?: TComponentProperties;
+    ComponentProperties: TComponentProperties;
     Component: React.ComponentType<LayoutItemProperties<TComponentProperties>>;
 }
 

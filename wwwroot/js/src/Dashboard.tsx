@@ -21,9 +21,9 @@ import {Guid} from "./guid";
 import {LayoutItemHeader} from "./LayoutItemHeader";
 import {LayoutItemHeaderProperties} from "./LayoutItemHeaderProperties";
 import {LayoutItemProperties, LayoutItem, PanelProperties} from "./LayoutItem";
-import Mapbox from "./Mapbox";
+
+import {Mapbox, MapboxProperties} from "./Mapbox";
 import MapboxLayoutItem from "./MapboxLayoutItem";
-import {MapboxProperties} from "./Mapbox";
 
 export interface DashboardProperties extends ResponsiveProps {}
 
@@ -119,17 +119,30 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
                             text: "MapView",
                             iconProps: {iconName: "Nav2DMapView"},
                             onClick: () => {
+                                const key = Guid.newGuid().ToString();
+
                                 const header: LayoutItemHeaderProperties = {
-                                    title: MapboxLayoutItem.defaultLayoutProperties.i,
-                                    onClose: this.onRemoveItem.bind(this, MapboxLayoutItem.defaultLayoutProperties.i)
+                                    title: key,
+                                    onClose: this.onRemoveItem.bind(this, key)
+                                };
+
+                                const layout: ReactGridLayout.Layout = {
+                                    i: key,
+                                    x: MapboxLayoutItem.defaultLayoutProperties.x,
+                                    y: MapboxLayoutItem.defaultLayoutProperties.y,
+                                    w: MapboxLayoutItem.defaultLayoutProperties.w,
+                                    h: MapboxLayoutItem.defaultLayoutProperties.h
                                 };
 
                                 const layoutItem: PanelProperties = {
-                                    LayoutProperties: MapboxLayoutItem.defaultLayoutProperties,
+                                    LayoutProperties: layout,
                                     HeaderProperties: header,
-                                    ComponentProperties: Mapbox.defaultProps,
+                                    ComponentProperties: Mapbox.defaultProperties,
                                     Component: MapboxLayoutItem
                                 };
+
+                                console.log(key);
+                                console.log(layoutItem);
 
                                 this.onAddItem(layoutItem);
                             }
@@ -159,7 +172,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
                 }
             }
         ];
-        
+
         this.onAddItem = this.onAddItem.bind(this);
         this.onRemoveItem = this.onRemoveItem.bind(this);
         this.onBreakpointChange = this.onBreakpointChange.bind(this);
@@ -185,7 +198,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
     }
 
     onBreakpointChange(newBreakpoint: string, newCols: number): void {
-        console.log(`onBreakpointChange ${newBreakpoint} ${newCols}`);
+        //console.log(`onBreakpointChange ${newBreakpoint} ${newCols}`);
         this.setState({
             breakpoint: newBreakpoint,
             cols: newCols
@@ -193,7 +206,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
     }
 
     onLayoutChange(currentLayout: ReactGridLayout.Layout[], allLayouts: ReactGridLayout.Layouts): void {
-        console.log("onLayoutChange");
+        //console.log("onLayoutChange");
         this.props.onLayoutChange(currentLayout, allLayouts);
 
         //this.Items.clear();
@@ -206,18 +219,18 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
             //this.Items.set(item.i, this.Items[item.i].);
         });
 
-        console.log(this.Items);
+        //console.log(this.Items);
 
         this.setState({items: this.Items});
     }
 
     shouldComponentUpdate?(nextProps: Readonly<DashboardProperties>, nextState: Readonly<DashboardState>, nextContext: any): boolean {
-        console.log("shouldComponentUpdate");
+        //console.log("shouldComponentUpdate");
         return true;
     }
 
     componentDidMount?(): void {
-        console.log("componentDidMount");
+        //console.log("componentDidMount");
 
         this.setState({
             mounted: true
@@ -225,11 +238,11 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
     }
 
     componentWillUnmount?(): void {
-        console.log("componentWillUnmount");
+        //console.log("componentWillUnmount");
     }
 
     componentDidCatch?(error: Error, errorInfo: React.ErrorInfo): void {
-        console.log("componentDidCatch");
+        //console.log("componentDidCatch");
     }
 
     //createElement(element: LayoutItem) {
@@ -237,7 +250,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
     //    //return element.render();
 
     //    const layout: ReactGridLayout.Layout = {
-    //        i: Guid.newGuid().toString(),
+    //        i: Guid.newGuid().ToString,
     //        x: 0,
     //        y: 0,
     //        w: 10,
@@ -300,7 +313,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
     }
 
     onWidthChange(containerWidth: number, margin: [number, number], cols: number, containerPadding: [number, number]): void {
-        console.log("onWidthChange");
+        //console.log("onWidthChange");
     }
 
     // Calls when drag starts.
@@ -312,7 +325,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
         event: MouseEvent,
         element: HTMLElement
     ): void {
-        console.log("onDragStart");
+        //console.log("onDragStart");
     }
 
     // Calls on each drag movement.
@@ -324,7 +337,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
         event: MouseEvent,
         element: HTMLElement
     ): void {
-        console.log("onDrag");
+        //console.log("onDrag");
     }
 
     // Calls when drag is complete.
@@ -336,7 +349,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
         event: MouseEvent,
         element: HTMLElement
     ): void {
-        console.log("onDragStop");
+        //console.log("onDragStop");
     }
 
     // Calls when resize starts.
@@ -348,7 +361,7 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
         event: MouseEvent,
         element: HTMLElement
     ): void {
-        console.log("onResizeStart");
+        //console.log("onResizeStart");
     }
 
     // Calls when resize movement happens.
@@ -360,13 +373,11 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
         event: MouseEvent,
         element: HTMLElement
     ): void {
-        console.log("onResize");
+        //console.log("onResize");
         //    if (!this.mounted) {
         //        return;
         //    }
-
         //    const node = ReactDOM.findDOMNode(this);
-
         //    if (node instanceof HTMLElement) {
         //        this.setState({
         //            width: node.offsetWidth,
@@ -384,11 +395,11 @@ export default class Dashboard extends React.Component<DashboardProperties, Dash
         event: MouseEvent,
         element: HTMLElement
     ): void {
-        console.log("onResizeStop");
+        //console.log("onResizeStop");
     }
 
     // Calls when an element has been dropped into the grid from outside.
     onDrop(elemParams: {x: number; y: number; w: number; h: number; e: Event}): void {
-        console.log("onDrop");
+        //console.log("onDrop");
     }
 }

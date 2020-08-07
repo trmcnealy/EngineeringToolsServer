@@ -1,33 +1,34 @@
 ﻿
 export class Guid {
+    static Empty = new Guid("00000000-0000-0000-0000-000000000000");
 
-    private static emptyInternal = new Guid("00000000-0000-0000-0000-000000000000");
+    private _guid: string;
 
-    private constructor(private strGuid: string) {}
+    constructor(guid: string) {
+        this._guid = guid;
+    }
 
-    public static newGuid(): Guid {
-        let date = Date.now();
+    ToString(): string {
+        return this._guid;
+    }
 
-        if (typeof performance !== "undefined" && typeof performance.now === "function") {
-            date += performance.now();
+    static newGuid(): Guid {
+        let result: string;
+        let i: string;
+        let j: number;
+
+        result = "";
+
+        for (j = 0; j < 32; j++) {
+            if (j === 8 || j === 12 || j === 16 || j === 20) {
+                result = result + "-";
+            }
+
+            i = Math.floor(Math.random() * 16).toString(16).toUpperCase();
+
+            result = result + i;
         }
 
-        const strGuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-            const r = ((date + Math.random() * 16) % 16) | 0;
-
-            date = Math.floor(date / 16);
-
-            return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-        });
-
-        return new Guid(strGuid);
-    }
-
-    public static get empty(): Guid {
-        return this.emptyInternal;
-    }
-
-    toString(): string {
-        return this.strGuid;
+        return new Guid(result);
     }
 }

@@ -159,13 +159,13 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
                         text: "MapView",
                         iconProps: {iconName: "Nav2DMapView"},
                         onClick: () => {
-                            //(As<GridLayoutItemProperties>({ i: Guid.newGuid().toString(), x: 0, y: 0, w: 10, h: 10 })
+                            //(As<GridLayoutItemProperties>({ i: Guid.newGuid().ToString, x: 0, y: 0, w: 10, h: 10 })
 
                             const mainMapLayoutItem = {
                                 id: 0,
                                 type: "Map",
                                 title: "MapView",
-                                layout: {i: Guid.newGuid().toString(), x: 0, y: 0, w: 10, h: 10},
+                                layout: {i: Guid.newGuid().ToString, x: 0, y: 0, w: 10, h: 10},
                                 header: {title: "MapView"},
                                 componentProperties: As<MapViewProperties>({
                                     className: "mapboxView",
@@ -222,7 +222,7 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
             id: 0,
             type: "Map",
             title: "MapView",
-            layout: {i: Guid.newGuid().toString(), x: 0, y: 0, w: 10, h: 10},
+            layout: {i: Guid.newGuid().ToString, x: 0, y: 0, w: 10, h: 10},
             header: {title: "MapView"},
             componentProperties: As<MapViewProperties>({
                 className: "mapboxView",
@@ -274,7 +274,7 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
         this.panelMap = new Map<string, LayoutItem>();
 
         for (const panel of this.props.dashboard.Panels) {
-            const stringId = panel.props.id.toString();
+            const stringId = panel.props.id.ToString;
 
             this.panelMap[stringId] = panel;
 
@@ -366,7 +366,7 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
         const panelElements:any[] = [];
 
         for (const panel of this.props.dashboard.Panels) {
-            const id = panel.props.id.toString();
+            const id = panel.props.id.ToString;
 
             panelElements.push(
                 <div key={id} className="react-grid-item" id={"panel-" + id} ref={(elem) => elem && (this.panelRef[id] = elem)}>

@@ -57,13 +57,21 @@ export default class FrameRateControl implements mapboxgl.IControl {
     ReadOutput: HTMLDivElement;
 
     @property()
-    Map: mapboxgl.Map | null;
+    Map: mapboxgl.Map;
 
     constructor(options: FrameRateControlOptions) {
         this.Frames = 0;
         this.TotalTime = 0;
         this.TotalFrames = 0;
         this.Options = {...options, ...FrameRateControl.defaultOptions};
+        
+        this.onMoveStart = this.onMoveStart.bind(this);
+        this.onMoveEnd = this.onMoveEnd.bind(this);
+        this.onRender = this.onRender.bind(this);
+        this.onAdd = this.onAdd.bind(this);
+        this.onRemove = this.onRemove.bind(this);
+        this.getFPS = this.getFPS.bind(this);
+        this.updateGraph = this.updateGraph.bind(this);
     }
 
     onAdd(map: mapboxgl.Map): HTMLElement {
