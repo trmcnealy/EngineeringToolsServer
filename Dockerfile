@@ -9,10 +9,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1903 AS build
 WORKDIR /src
-COPY ["Web/EngineeringToolsServer/EngineeringToolsServer.csproj", "Web/EngineeringToolsServer/"]
-RUN dotnet restore "Web/EngineeringToolsServer/EngineeringToolsServer.csproj"
+COPY ["EngineeringToolsServer/EngineeringToolsServer.csproj", "EngineeringToolsServer/"]
+RUN dotnet restore "EngineeringToolsServer/EngineeringToolsServer.csproj"
 COPY . .
-WORKDIR "/src/Web/EngineeringToolsServer"
+WORKDIR "/src/EngineeringToolsServer"
 RUN dotnet build "EngineeringToolsServer.csproj" -c Release -o /app/build
 
 FROM build AS publish
