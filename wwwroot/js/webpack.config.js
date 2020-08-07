@@ -1,15 +1,19 @@
 const path = require("path");
+
 //var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     mode: "development", // "production" | "development"
     entry: [
-        "./src/NavMenu.tsx"
+        "./src/index.tsx", "../css/site.scss"
     ],
     output: {
         filename: "index.js",
         path: path.resolve(__dirname, "../js")
     },
+    //optimization: {
+    //    minimizer: [new TerserPlugin({ /* additional options here */ })]
+    //},
     module: {
         rules: [
             {
@@ -22,6 +26,17 @@ module.exports = {
                         loader: "css-loader",
                         options: { modules: true }
                     }
+                ]
+            },
+            {
+                test: /\.s[ac]ss$/i,
+                use: [
+                    // Creates `style` nodes from JS strings
+                    'style-loader',
+                    // Translates CSS into CommonJS
+                    'css-loader',
+                    // Compiles Sass to CSS
+                    'sass-loader'
                 ]
             },
             {
@@ -68,7 +83,7 @@ module.exports = {
         ]
     },
     resolve : {
-        extensions: [".ts", ".tsx", ".js", ".mjs", ".jsx"]
+        extensions: [".ts", ".tsx", ".js", ".mjs", ".jsx", ".css", ".scss"]
     },
     plugins: [
         //new CleanWebpackPlugin(),

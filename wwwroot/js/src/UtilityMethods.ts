@@ -5,9 +5,7 @@ import mapboxgl from "mapbox-gl";
 import StyleFunction = mapboxgl.StyleFunction;
 import Expression = mapboxgl.Expression;
 
-
 export const As = <T>(value: any): T => value as T;
-
 
 export const NotNull = <T, R extends NonNullable<T>>(val?: T): R => {
     if (typeof val === typeof undefined || val === undefined || val === null) {
@@ -17,7 +15,6 @@ export const NotNull = <T, R extends NonNullable<T>>(val?: T): R => {
 };
 
 export const getValue = <T, K extends keyof T>(obj: T, key: K): T[K] => obj[key];
-
 
 export const NullishCoalescing = <T>(val: T, otherVal: T): T => {
     if (typeof val === typeof undefined && typeof otherVal !== typeof undefined) {
@@ -102,7 +99,6 @@ export interface rgb {
     b: number;
 }
 
-
 type GradientRgbResultType = string | StyleFunction | Expression;
 
 export class ColorMethods {
@@ -182,12 +178,7 @@ export class ColorMethods {
         return result;
     }
 
-
-
-
-
     static GradientRgb(variable: string, colorA: any, colorB: any, steps: number, valueA: number, valueB: number): GradientRgbResultType[] {
-
         var result = new Array<GradientRgbResultType>(steps);
         // var rInterval;
         // var gInterval;
@@ -235,4 +226,70 @@ export class ColorMethods {
 
         return result;
     }
+}
+
+export async function clientSetVariable(rootUrl, variableName, variableData, mediaType = MediaTypes.Json) {
+    const response = await fetch(`${rootUrl}/data/${variableName}`, {
+        method: "POST",
+        cache: "no-cache",
+        mode: "same-origin",
+        body: JSON.stringify(variableData),
+        headers: {
+            "Content-Type": `${mediaType}`
+        }
+    });
+
+    return await response;
+}
+
+export async function SetVariable(variableName, variableData, mediaType = MediaTypes.Json) {
+    const csharpVariable = await clientSetVariable(window.location.origin, variableName, variableData, mediaType).then(variable => variable);
+
+    if (csharpVariable !== null) {
+        return csharpVariable;
+    }
+
+    return [];
+}
+
+export async function clientGetVariable(rootUrl, variable) {
+    fetch(`${rootUrl}/data/${variable}`, {
+        method: "GET",
+        cache: "no-cache",
+        mode: "same-origin"
+    }).then(
+        response => {
+            if (response.headers["Content-Type"] === "text/plain") {
+                return response.text();
+            }
+            if (response.headers["Content-Type"] === "application/json") {
+                return response.json();
+            }
+            if (response.headers["Content-Type"] === "multipart/form-data") {
+                return response.formData();
+            }
+            if (response.headers["Content-Type"] === "arraybuffer") {
+                return response.arrayBuffer();
+            }
+
+            return response.blob();
+        },
+        err => {
+            console.error(err);
+        }
+    );
+
+    return null;
+}
+
+export async function GetVariable(variableName) {
+    return await clientGetVariable(window.location.origin, variableName).then(variable => variable);
+}
+
+export function clientGetVariableUrl(rootUrl, variable) {
+    return `${rootUrl}/data/${variable}`;
+}
+
+export function GetVariableUrl(variableName) {
+    return clientGetVariableUrl(window.location.origin, variableName);
 }

@@ -3,7 +3,7 @@
     "useTabs": false,
     "tabWidth": 4,
     "semi": true,
-    "printWidth": 200,
+    "printWidth": 175,
     "trailingComma": "none",
     "bracketSpacing": false,
     "jsxBracketSameLine": false,

@@ -1,0 +1,182 @@
+﻿#root {
+    --blue-logo: #22A7F0;
+    display: flex;
+    -webkit-flex: 1;
+    flex: 1;
+    height: 100%
+}
+
+.app {
+    display: flex;
+    -webkit-flex: 1;
+    flex: 1;
+    flex-direction: column;
+}
+
+#root .react-resizable-handle {
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+    -webkit-transform: none !important;
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj4KICA8cGF0aCBmaWxsPSIjNjY2IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiwwIEwxMiwyLjUyNjMxNTc5IEwyLjUyNjMxNTc5LDEyIEwwLDEyIEwxMiwwIFogTTEyLDQgTDEyLDYuNDYxNTM4NDYgTDYuNDYxNTM4NDYsMTIgTDQsMTIgTDEyLDQgWiBNMTIsOCBMMTIsMTAuMjg1NzE0MyBMMTAuMjg1NzE0MywxMiBMOCwxMiBMMTIsOCBaIi8+Cjwvc3ZnPgo=") no-repeat bottom right !important;
+    background-origin: content-box;
+    bottom: 0;
+    box-sizing: border-box;
+    cursor: se-resize;
+    height: 20px;
+    padding: 0 5px 5px 0;
+    position: absolute;
+    right: 0;
+    transform: none !important;
+    width: 20px;
+    z-index: 2;
+}
+
+.chart-grid-item { height: inherit }
+
+.grid-item-container { height: inherit }
+
+.dashboard-container {
+    display: flex;
+    -webkit-flex: 1;
+    flex: 1;
+    flex-direction: column;
+    overflow-x: hidden
+}
+
+.dashboard-grid-container {
+    display: flex;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+
+.react-grid-layout {
+    position: relative;
+    -o-transition: height 200ms ease;
+    -webkit-transition: height 200ms ease;
+    transition: height 200ms ease
+}
+
+.react-grid-item {
+    -o-transition: all 100ms ease;
+    -webkit-transition: all 100ms ease;
+    transition: all 100ms ease;
+    -o-transition-property: left, top;
+    -webkit-transition-property: left, top;
+    transition-property: left, top
+}
+
+.react-grid-item.cssTransforms {
+    -o-transition-property: transform;
+    -webkit-transition-property: transform;
+    transition-property: -webkit-transform;
+    transition-property: transform
+}
+
+.react-grid-item.resizing { z-index: 1 }
+
+.react-grid-placeholder {
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -o-transition-duration: 100ms;
+    -webkit-transition-duration: 100ms;
+    transition-duration: 100ms;
+    user-select: none;
+    z-index: 100;
+}
+
+.react-grid-layout {
+    background-color: #F4F5F6
+}
+
+.react-grid-layout { background: none }
+
+.react-grid-item:hover { z-index: 1 }
+
+
+.react-grid-layout {
+    position: relative;
+    -o-transition: height 200ms ease;
+    -webkit-transition: height 200ms ease;
+    transition: height 200ms ease
+}
+
+.react-grid-item {
+    background-color: #A4F5F6;
+    -o-transition: all 100ms ease;
+    -webkit-transition: all 100ms ease;
+    transition: all 100ms ease;
+    -o-transition-property: left, top;
+    -webkit-transition-property: left, top;
+    transition-property: left, top
+}
+
+.react-grid-item.cssTransforms {
+    -o-transition-property: -webkit-transform;
+    -webkit-transition-property: -webkit-transform;
+    transition-property: -webkit-transform;
+    transition-property: transform
+}
+
+.react-grid-item.resizing { z-index: 1 }
+
+.react-grid-placeholder {
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -o-transition-duration: 100ms;
+    -webkit-transition-duration: 100ms;
+    transition-duration: 100ms;
+    user-select: none;
+    z-index: 100;
+}
+
+.react-grid-layout {
+    background-color: #F4F5F6
+}
+
+.react-grid-item.react-draggable-dragging {
+    transition: none;
+    z-index: 3
+}
+
+.react-grid-item.react-grid-placeholder {
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    background: var(--blue-logo);
+    opacity: 0.2;
+    -o-transition-duration: 100ms;
+    -webkit-transition-duration: 100ms;
+    transition-duration: 100ms;
+    user-select: none;
+    z-index: 2;
+}
+
+.react-resizable { position: relative }
+
+
+.react-grid-item:not(.react-grid-placeholder) {
+    border: 1px solid black;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px 1px #000000;
+    box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.1);
+}
+
+.react-grid-item.resizing {
+    opacity: 0.4
+}
+
+.react-grid-item .minMax { font-size: 12px }
+
+.react-grid-item .add { cursor: pointer }
+
+.react-grid-item.react-draggable-dragging {
+    -o-transition: none;
+    -webkit-transition: none;
+    transition: none;
+    z-index: 3
+}

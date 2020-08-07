@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\js\src\DataSource.tsx" />
     <Content Include="wwwroot\js\src\NavMenu.tsx" />
   </ItemGroup>
 
@@ -56,6 +57,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\" />
+    <Folder Include="wwwroot\js\src\Data\" />
+    <Folder Include="wwwroot\js\src\LayoutItems\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,9 +66,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\js\src\Data\DataSourcetsx" />
-    <TypeScriptCompile Include="wwwroot\js\src\Todo\Apptsx" />
-    <TypeScriptCompile Include="wwwroot\js\src\Todo\LassoDrawtsx" />
+    <TypeScriptCompile Include="wwwroot\js\Ignore\Apptsx" />
+    <TypeScriptCompile Include="wwwroot\js\Ignore\LassoDrawtsx" />
   </ItemGroup>
 
   <ItemGroup>

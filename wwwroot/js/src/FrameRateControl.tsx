@@ -1,6 +1,7 @@
-﻿import {property, sealed} from "./Decorators";
+﻿
+import {property, sealed} from "./Decorators";
 
-//import mapboxgl from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 
 export interface FrameRateControlOptions {
     background: string;
@@ -15,7 +16,8 @@ export interface FrameRateControlOptions {
 }
 
 @sealed
-export default class FrameRateControl {
+export default class FrameRateControl implements mapboxgl.IControl {
+
     static dpr: number = (window as any).devicePixelRatio;
 
     static defaultOptions: FrameRateControlOptions = {
@@ -28,7 +30,7 @@ export default class FrameRateControl {
         graphTop: 0,
         graphRight: 5 * FrameRateControl.dpr,
         width: 100 * FrameRateControl.dpr
-    } as FrameRateControlOptions;
+    };
 
     @property()
     Frames: number;
@@ -64,7 +66,7 @@ export default class FrameRateControl {
         this.Options = {...options, ...FrameRateControl.defaultOptions};
     }
 
-    onAdd(map: mapboxgl.Map): HTMLDivElement {
+    onAdd(map: mapboxgl.Map): HTMLElement {
         this.Map = map;
 
         const dpr = window.devicePixelRatio;
@@ -156,7 +158,7 @@ export default class FrameRateControl {
         this.ReadOutput.textContent = `${fpsNow} FPS (${fps} Avg)`;
     }
 
-    onRemove(): FrameRateControl {
+    onRemove(map: mapboxgl.Map): any {
         if (this.Map !== null) {
             this.Map.off("render", this.onRender);
             this.Map.off("movestart", this.onMoveStart);

@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 
 import mapboxgl from "mapbox-gl";
 
-import {Fabric, initializeIcons, ICustomizations, Customizer} from "office-ui-fabric-react";
+import {Fabric, initializeIcons, ICustomizations, Customizer, Overlay} from "office-ui-fabric-react";
 import {Nav, INavLink, INavLinkGroup} from "office-ui-fabric-react/lib/Nav";
 
 import {DarkThemeCustomizations} from "./DarkTheme";
@@ -41,7 +41,7 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
             key: "Home",
             target: "_blank",
             icon: "Nav2DMapView",
-            title:"Home",
+            title: "Home",
             onClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink): void => {
                 if (ev !== null && ev !== undefined) {
                     ev.preventDefault();
@@ -63,7 +63,7 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
             key: "WellLocations",
             target: "_blank",
             icon: "MapPin",
-            title:"Wellbore Locations",
+            title: "Wellbore Locations",
             onClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink): void => {
                 if (ev !== null && ev !== undefined) {
                     ev.preventDefault();
@@ -81,7 +81,7 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
             key: "ReservoirData",
             target: "_blank",
             icon: "MapLayers",
-            title:"Reservoir Depths",
+            title: "Reservoir Depths",
             onClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink): void => {
                 if (ev !== null && ev !== undefined) {
                     ev.preventDefault();
@@ -99,7 +99,7 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
             key: "GasProperties",
             target: "_blank",
             icon: "Precipitation",
-            title:"Gas Properties",
+            title: "Gas Properties",
             onClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink): void => {
                 if (ev !== null && ev !== undefined) {
                     ev.preventDefault();
@@ -117,7 +117,7 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
             key: "OilProperties",
             target: "_blank",
             icon: "DropShapeSolid",
-            title:"Oil Properties",
+            title: "Oil Properties",
             onClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink): void => {
                 if (ev !== null && ev !== undefined) {
                     ev.preventDefault();
@@ -166,7 +166,6 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
     }
 
     toggleLayerVisibility(element: HTMLElement, layerId: string): void {
-
         const visibility = (window as any).map.getLayoutProperty(layerId, "visibility");
 
         if (visibility === "visible") {
@@ -180,27 +179,21 @@ export default class NavMenu extends React.Component<NavMenuProperties> {
         }
     }
 
+    componentDidMount?(): void {
+        this.initialize();
+    }
+
     render() {
-        
-        initializeIcons();
-
-        const Customizations = DarkThemeCustomizations;
-
         return (
-            <Customizer settings={Customizations.settings} scopedSettings={Customizations.scopedSettings}>
-                <Fabric>
-                    <Nav initialSelectedKey="GasProperties" groups={this.NavLinkGroups} />
-                </Fabric>
-            </Customizer>
-        );
+                <Nav className="navMenu" initialSelectedKey="GasProperties" groups={this.NavLinkGroups} />
+            );
     }
 }
 
-ReactDOM.render(
-    <NavMenu />,
-    document.getElementById("navMenu")
-);
-
+//ReactDOM.render(
+//    <NavMenu />,
+//    document.getElementById("navMenu")
+//);
 
 //import { createTheme } from "@uifabric/fluent-theme";
 //import { Customizations } from "@uifabric/utilities";

@@ -22,13 +22,13 @@ namespace EngineeringToolsServer.Pages
             _navigationManager = navigationManager;
         }
 
-        public async Task<IActionResult> OnGetAsync()
-        {
-            //_navigationManager.NavigateTo("/ArcGis");
+        //public async Task<IActionResult> OnGetAsync()
+        //{
+        //    //_navigationManager.NavigateTo("/ArcGis");
 
-            //return await Task.FromResult(RedirectToPage("/ArcGis"));
-            return await Task.FromResult(RedirectToPage("/Mapbox"));
-        }
+        //    //return await Task.FromResult(RedirectToPage("/ArcGis"));
+        //    return await Task.FromResult(RedirectToPage("/Mapbox"));
+        //}
 
         //public async Task<IActionResult> OnPostAsync()
         //{

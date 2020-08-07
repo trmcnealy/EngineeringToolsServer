@@ -48,6 +48,9 @@ export const property = <T>(descriptor?: NotifiedTypedPropertyDescriptor<T>) => 
             descriptor.set = (value: T): void => {
                 if (target !== value) {
                     target = value;
+
+                    console.log(`key:${String(key)} target:${target}`);
+                    //this.setState({ key: target });
                 }
             };
         }

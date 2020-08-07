@@ -1,0 +1,188 @@
+﻿.main-nav {
+    align-items: center;
+    background: white;
+    display: flex;
+    flex: 0 0 48px;
+    padding: 0 16px;
+    z-index: 300
+}
+
+.main-nav .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.main-nav .button {
+    color: #555;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    height: 48px;
+    line-height: 50px;
+    margin: 0 16px;
+    padding: 0 8px;
+    text-decoration: none !important;
+    text-transform: uppercase;
+}
+
+.main-nav .button:hover { color: var(--blue-main, #0089D1) }
+
+.main-nav .button:hover .icon { fill: var(--blue-main, #0089D1) }
+
+.main-nav .button:hover > .help-popover { color: #666 }
+
+.main-nav .button.active {
+    color: var(--blue-main, #0089D1);
+    position: relative
+}
+
+.main-nav .button.active::after {
+    animation: showHighlightBar 0.25s;
+    background: var(--blue-main, #0089D1);
+    bottom: 0;
+    content: '';
+    height: 3px;
+    left: 0;
+    position: absolute;
+    transform-origin: 50% 50%;
+    width: 100%;
+}
+
+.main-nav .button.active .icon { fill: var(--blue-main, #0089D1) }
+
+.main-nav .main-nav-logo {
+    cursor: pointer;
+    height: 48px;
+    margin-right: 24px;
+}
+
+.main-nav .right-nav-buttons {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end
+}
+
+.main-nav .help-popover,
+.main-nav .user-popover {
+    background: white;
+    border: 1px solid #c7c7c7;
+    border-radius: 4px;
+    box-shadow: 0 2px 3px 1px rgba(0, 0, 0, 0.2);
+    color: #666;
+    font-weight: 200;
+    list-style: none;
+    padding: 12px 12px;
+    position: absolute;
+    text-align: left;
+    top: 50px;
+    width: 210px;
+}
+
+.main-nav .help-popover .nav-dropdown-break,
+.main-nav .user-popover .nav-dropdown-break {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-color: #e2e2e2;
+    margin: 10px 0
+}
+
+.main-nav .help-popover .dropdown-link,
+.main-nav .user-popover .dropdown-link {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.main-nav .help-popover .highlight,
+.main-nav .user-popover .highlight {
+    padding-left: 8px;
+    padding-right: 8px
+}
+
+.main-nav .help-popover .highlight:hover,
+.main-nav .user-popover .highlight:hover { color: var(--blue-main, #0089D1) }
+
+.main-nav .help-popover .displayText,
+.main-nav .user-popover .displayText {
+    color: #868686;
+    cursor: default;
+    line-height: 1.3em;
+    text-transform: none;
+}
+
+.main-nav .help-popover .displayText .displayTextBlock,
+.main-nav .user-popover .displayText .displayTextBlock {
+    font-weight: 200;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.main-nav .help-popover .displayText .displayHighlight,
+.main-nav .user-popover .displayText .displayHighlight { color: #404040 }
+
+.main-nav .user-popover {
+    padding: 0;
+    right: -16px;
+    text-align: left;
+}
+
+.main-nav .user-popover .highlight { padding: 0 }
+
+.main-nav .user-popover li .highlight { padding: 0.8em 1em }
+
+.main-nav .user-popover li:first-child > :first-child {
+    border-bottom: 1px solid #c7c7c7;
+    font-size: .9em;
+    padding: 0.8rem 1em;
+}
+
+.main-nav .user-popover li:nth-child(2) > :first-child {
+    cursor: default;
+    padding-top: 1.6em;
+}
+
+.main-nav .user-dropdown-display {
+    align-items: center;
+    display: flex;
+    fill: #666;
+    line-height: initial
+}
+
+.main-nav .user-dropdown-display .user-icon {
+    display: block;
+    height: 32px;
+    padding: 2px;
+    width: 32px;
+}
+
+.main-nav .dropdown-display-text {
+    fill: #666;
+    padding-right: 8px;
+    position: relative;
+}
+
+.main-nav .dropdown-display-text .dropdown-display-icon {
+    position: absolute;
+    right: -8px;
+    top: -16px
+}
+
+.main-nav .dropdown-display-icon {
+    display: inline-block;
+    height: 1em;
+    margin-left: .25em;
+    margin-top: 1px;
+    width: 1em;
+}
+
+.main-nav .user-icon { position: relative }
+
+.main-nav .user-icon .dropdown-display-icon {
+    position: absolute;
+    right: -10px;
+    top: -5px
+}

@@ -11,12 +11,14 @@ import {ThemeProvider, Theme} from "@fluentui/react-theme-provider";
 import {DarkThemeCustomizations} from "./DarkTheme";
 import {LightThemeCustomizations} from "./LightTheme";
 
+
+
 import * as Decorators from "./Decorators";
 import property = Decorators.property;
 
-import NavMenu from "./NavMenu";
-import MainLayout from "./MainLayout";
-import { DashboardState } from "./DashboardState";
+import Dashboard from "./Dashboard";
+//import MainLayout from "./MainLayout";
+//import { DashboardState } from "./DashboardState";
 
 //interface AppContextProperties {
 //}
@@ -45,16 +47,11 @@ export interface AppState {
 }
 
 export default class App extends React.Component<AppProperties, AppState> {
+
     static defaultProperties: AppProperties = {
         DarkMode: true
         //Theme: DarkThemeCustomizations.settings.theme
     } as AppProperties;
-
-    getCustomizations(): ICustomizations {
-        const darkMode = (window as any).DarkMode as boolean;
-
-        return darkMode ? DarkThemeCustomizations : LightThemeCustomizations;
-    }
 
     constructor(props: AppProperties) {
         super(props);
@@ -62,6 +59,12 @@ export default class App extends React.Component<AppProperties, AppState> {
         this.state = {
             DarkMode: this.props.DarkMode
         };
+    }
+    
+    getCustomizations(): ICustomizations {
+        const darkMode = this.props.DarkMode as boolean;
+
+        return darkMode ? DarkThemeCustomizations : LightThemeCustomizations;
     }
 
     shouldComponentUpdate?(nextProps: Readonly<AppProperties>, nextState: Readonly<AppState>, nextContext: any): boolean {
@@ -80,13 +83,13 @@ export default class App extends React.Component<AppProperties, AppState> {
 
         const Customizations = this.getCustomizations();
 
-        const dashboardState = new DashboardState();
+        //const dashboardState = new DashboardState();
 
         return (
             //<ThemeProvider theme={this.Properties.Theme}>
             <Customizer settings={Customizations.settings} scopedSettings={Customizations.scopedSettings}>
-                <Fabric applyTheme>
-                    <MainLayout dashboard={dashboardState}/>
+                <Fabric className="root" applyTheme={true}>
+                    <Dashboard {...Dashboard.defaultProperties}/>
                 </Fabric>
             </Customizer>
             //</ThemeProvider>
