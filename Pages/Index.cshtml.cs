@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using EngineeringToolsServer.Services;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -22,13 +24,19 @@ namespace EngineeringToolsServer.Pages
             _navigationManager = navigationManager;
         }
 
-        //public async Task<IActionResult> OnGetAsync()
-        //{
-        //    //_navigationManager.NavigateTo("/ArcGis");
+        public async Task OnGetAsync()
+        {
 
-        //    //return await Task.FromResult(RedirectToPage("/ArcGis"));
-        //    return await Task.FromResult(RedirectToPage("/Mapbox"));
-        //}
+
+            DataManager.Instance[("OilGasDbData", MediaTypes.Json)] = await  DatabaseService.QueryDbAsync(OilGasQueries.OilGasDb);
+
+
+            //_navigationManager.NavigateTo("/ArcGis");
+
+            //return await Task.FromResult(RedirectToPage("/ArcGis"));
+            //return await Task.FromResult(RedirectToPage("/Mapbox"));
+
+        }
 
         //public async Task<IActionResult> OnPostAsync()
         //{

@@ -1,5 +1,7 @@
 {
     "singleQuote": false,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
     "useTabs": false,
     "tabWidth": 4,
     "semi": true,
@@ -10,5 +12,6 @@
     "arrowParens": "always",
     "endOfLine": "lf",
     "proseWrap": "preserve",
-    "parser": "typescript"
+    "parser": "typescript",
+    "htmlWhitespaceSensitivity": "css"
 }

@@ -53,64 +53,64 @@ namespace EngineeringToolsServer.Pages
             _logger = logger;
         }
 
-        public async Task OnGetAsync()
-        {
-            Loading = true;
+        //public async Task OnGetAsync()
+        //{
+        //    Loading = true;
 
-            if(!DataManager.Instance.IsValidVariable("PlotlyData"))
-            {
-                DataFrame? dataFrame = await DatabaseService.QueryDbAsync(OilGasQueries.AllWellsLocations);
+        //    if(!DataManager.Instance.IsValidVariable("PlotlyData"))
+        //    {
+        //        DataFrame? dataFrame = await DatabaseService.QueryDbAsync(OilGasQueries.AllWellsLocations);
 
-                if(dataFrame != null)
-                {
-                    string[] plotlyLineDatas = new string[dataFrame.Rows.Count];
+        //        if(dataFrame != null)
+        //        {
+        //            string[] plotlyLineDatas = new string[dataFrame.Rows.Count];
 
-                    StringDataFrameColumn?           apis             = dataFrame.Columns.GetStringColumn("Api");
-                    PrimitiveDataFrameColumn<double> surfaceLongitude = dataFrame.Columns.GetPrimitiveColumn<double>("SurfaceLongitude");
-                    PrimitiveDataFrameColumn<double> bottomLongitude  = dataFrame.Columns.GetPrimitiveColumn<double>("BottomLongitude");
-                    PrimitiveDataFrameColumn<double> surfaceLatitude  = dataFrame.Columns.GetPrimitiveColumn<double>("SurfaceLatitude");
-                    PrimitiveDataFrameColumn<double> bottomLatitude   = dataFrame.Columns.GetPrimitiveColumn<double>("BottomLatitude");
+        //            StringDataFrameColumn?           apis             = dataFrame.Columns.GetStringColumn("Api");
+        //            PrimitiveDataFrameColumn<double> surfaceLongitude = dataFrame.Columns.GetPrimitiveColumn<double>("SurfaceLongitude");
+        //            PrimitiveDataFrameColumn<double> bottomLongitude  = dataFrame.Columns.GetPrimitiveColumn<double>("BottomLongitude");
+        //            PrimitiveDataFrameColumn<double> surfaceLatitude  = dataFrame.Columns.GetPrimitiveColumn<double>("SurfaceLatitude");
+        //            PrimitiveDataFrameColumn<double> bottomLatitude   = dataFrame.Columns.GetPrimitiveColumn<double>("BottomLatitude");
 
-                    Parallel.ForEach(Partitioner.Create(0, dataFrame.Rows.Count, dataFrame.Rows.Count / Environment.ProcessorCount),
-                                     row =>
-                                     {
-                                         for(long i = row.Item1; i < row.Item2; i++)
-                                         {
-                                             plotlyLineDatas[i] = new PlotlyLineData($"API: {apis[i]}",
-                                                                                     new double?[]
-                                                                                     {
-                                                                                         surfaceLongitude[i], bottomLongitude[i]
-                                                                                     },
-                                                                                     new double?[]
-                                                                                     {
-                                                                                         surfaceLatitude[i], bottomLatitude[i]
-                                                                                     },
-                                                                                     1.0,
-                                                                                     2,
-                                                                                     "rgba(255,0,0,255)").ToJson();
-                                         }
-                                     });
+        //            Parallel.ForEach(Partitioner.Create(0, dataFrame.Rows.Count, dataFrame.Rows.Count / Environment.ProcessorCount),
+        //                             row =>
+        //                             {
+        //                                 for(long i = row.Item1; i < row.Item2; i++)
+        //                                 {
+        //                                     plotlyLineDatas[i] = new PlotlyLineData($"API: {apis[i]}",
+        //                                                                             new double?[]
+        //                                                                             {
+        //                                                                                 surfaceLongitude[i], bottomLongitude[i]
+        //                                                                             },
+        //                                                                             new double?[]
+        //                                                                             {
+        //                                                                                 surfaceLatitude[i], bottomLatitude[i]
+        //                                                                             },
+        //                                                                             1.0,
+        //                                                                             2,
+        //                                                                             "rgba(255,0,0,255)").ToJson();
+        //                                 }
+        //                             });
 
-                    //for(int i = 0; i < dataFrame.Rows.Count; ++i)
-                    //{
-                    //    longitudes.Add(new double?[]
-                    //    {
-                    //        surfaceLongitude[i], bottomLongitude[i]
-                    //    });
-                    //    latitudes.Add(new double?[]
-                    //    {
-                    //        surfaceLatitude[i], bottomLatitude[i]
-                    //    });
-                    //}
+        //            //for(int i = 0; i < dataFrame.Rows.Count; ++i)
+        //            //{
+        //            //    longitudes.Add(new double?[]
+        //            //    {
+        //            //        surfaceLongitude[i], bottomLongitude[i]
+        //            //    });
+        //            //    latitudes.Add(new double?[]
+        //            //    {
+        //            //        surfaceLatitude[i], bottomLatitude[i]
+        //            //    });
+        //            //}
 
-                    DataManager.Instance[("PlotlyData", MediaTypes.Json)] = "[" + string.Join(", ", plotlyLineDatas) + "]";
+        //            DataManager.Instance[("PlotlyData", MediaTypes.Json)] = "[" + string.Join(", ", plotlyLineDatas) + "]";
 
-                    //_logger.LogInformation($"{DataManager.Instance.BaseUrl}/data/WellLocations");
-                }
-            }
+        //            //_logger.LogInformation($"{DataManager.Instance.BaseUrl}/data/WellLocations");
+        //        }
+        //    }
 
-            Loading = false;
-        }
+        //    Loading = false;
+        //}
     }
 }
 

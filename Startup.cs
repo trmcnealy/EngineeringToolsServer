@@ -24,7 +24,7 @@ namespace EngineeringToolsServer
 
         public IConfiguration Configuration { get; }
 
-        public static IServerEventsController ServerEventsController { get; } = new ServerEventsController();
+        //public static IServerEventsController ServerEventsController { get; } = new ServerEventsController();
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -35,7 +35,7 @@ namespace EngineeringToolsServer
                                            configuration.RootPath = "wwwroot/build";
                                        });
 
-            services.AddSingleton(ServerEventsController);
+            //services.AddSingleton(ServerEventsController);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

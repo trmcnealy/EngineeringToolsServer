@@ -127,6 +127,12 @@
   <data name="MonthlyProduction" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>MonthlyProduction.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="OilGasDb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>OilGasDb.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="OilGasProductionDb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>OilGasProductionDb.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="WellsData" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>WellsData.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

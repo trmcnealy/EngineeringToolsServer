@@ -19,7 +19,7 @@ namespace EngineeringToolsServer.Services
 {
     public sealed class DatabaseService
     {
-        public DatabaseConnection DatabaseConnection { get; set; }
+        public DbConnection DatabaseConnection { get; set; }
 
         private static volatile DatabaseService _instance;
 
@@ -35,35 +35,35 @@ namespace EngineeringToolsServer.Services
 
         private DatabaseService()
         {
-            DatabaseConnection = DatabaseConnection.Default;
+            DatabaseConnection = new DbConnection();
         }
+
+//#if NETSTANDARD
+//        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//#else
+//        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+//#endif
+//        private DataFrame? queryDb(string sql)
+//        {
+//            return DatabaseConnection.QueryDb(sql);
+//        }
 
 #if NETSTANDARD
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #else
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 #endif
-        private DataFrame? queryDb(string sql)
+        private async Task<string?> queryDbAsync(string sql)
         {
-            return DatabaseConnection.QueryDb(sql);
+            return await DatabaseConnection.SqlQueryAsync(sql);
         }
 
-#if NETSTANDARD
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-#endif
-        private async Task<DataFrame?> queryDbAsync(string sql)
-        {
-            return await DatabaseConnection.QueryDbAsync(sql);
-        }
+        //public static DataFrame? QueryDb(string sql)
+        //{
+        //    return _instance.queryDb(sql);
+        //}
 
-        public static DataFrame? QueryDb(string sql)
-        {
-            return _instance.queryDb(sql);
-        }
-
-        public static async Task<DataFrame?> QueryDbAsync(string sql)
+        public static async Task<string?> QueryDbAsync(string sql)
         {
             return await _instance.queryDbAsync(sql);
         }

@@ -105,7 +105,8 @@ namespace EngineeringToolsServer.Services {
         ///LEFT JOIN (
         ///    SELECT &quot;Id&quot;, &quot;Date&quot;, &quot;GasVolume&quot;, &quot;OilVolume&quot;, &quot;CondensateVolume&quot;, &quot;WaterVolume&quot;, &quot;WellId&quot;
         ///    FROM &quot;MonthlyProduction&quot;
-        ///) MonthlyProd [rest of string was truncated]&quot;;.
+        ///) MonthlyProductions
+        ///ON Wel [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MonthlyProduction {
             get {
@@ -114,19 +115,55 @@ namespace EngineeringToolsServer.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SELECT
-        ///    Wells.&quot;Api&quot; AS &quot;Api&quot;,
-        ///    Wells.&quot;Name&quot; AS &quot;Name&quot;,
-        ///    Wells.&quot;Number&quot; AS &quot;Number&quot;,
-        ///    &quot;Lease&quot;.&quot;Name&quot; AS &quot;Lease&quot;,
-        ///    &quot;Field&quot;.&quot;Name&quot; AS &quot;Field&quot;,
-        ///    &quot;Company&quot;.&quot;Name&quot; AS &quot;Company&quot;,
-        ///    ReservoirDatas.&quot;ReservoirName&quot; AS &quot;ReservoirName&quot;,
-        ///    ReservoirDatas.&quot;ReservoirDepth&quot; AS &quot;ReservoirDepth&quot;,
-        ///    GasPropertiess.&quot;SpecificGravity&quot; AS &quot;GasSpecificGravity&quot;,
-        ///    OilPropertiess.&quot;Density&quot; AS &quot;OilApiGravity&quot;,
-        ///    &quot;ShapeFileLocation&quot;.&quot;SurfaceLatitude83&quot; AS &quot;SurfaceLatitude&quot;,
-        ///    &quot;ShapeFileLocation&quot;.&quot;SurfaceL [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to 
+        ///SELECT
+        ///    json_build_object(&apos;Api&apos;,DataTable.&quot;Api&quot;,
+        ///        &apos;ReservoirName&apos;,DataTable.&quot;ReservoirName&quot;,
+        ///        &apos;ReservoirDepth&apos;,DataTable.&quot;ReservoirDepth&quot;,
+        ///        &apos;GasSpecificGravity&apos;,DataTable.&quot;GasSpecificGravity&quot;,
+        ///        &apos;GasReferenceTemperature&apos;,DataTable.&quot;GasReferenceTemperature&quot;,
+        ///        &apos;GasReferencePressure&apos;,DataTable.&quot;GasReferencePressure&quot;,
+        ///        &apos;OilApiGravity&apos;,DataTable.&quot;OilApiGravity&quot;,
+        ///        &apos;OilReferenceTemperature&apos;,DataTable.&quot;OilReferenceTemperature&quot;,
+        ///        &apos;OilReferencePress [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string OilGasDb {
+            get {
+                return ResourceManager.GetString("OilGasDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///SELECT
+        ///    json_build_object(&apos;Api&apos;,DataTable.&quot;Api&quot;,
+        ///        &apos;ReservoirName&apos;,DataTable.&quot;ReservoirName&quot;,
+        ///        &apos;ReservoirDepth&apos;,DataTable.&quot;ReservoirDepth&quot;,
+        ///        &apos;GasSpecificGravity&apos;,DataTable.&quot;GasSpecificGravity&quot;,
+        ///        &apos;GasReferenceTemperature&apos;,DataTable.&quot;GasReferenceTemperature&quot;,
+        ///        &apos;GasReferencePressure&apos;,DataTable.&quot;GasReferencePressure&quot;,
+        ///        &apos;OilApiGravity&apos;,DataTable.&quot;OilApiGravity&quot;,
+        ///        &apos;OilReferenceTemperature&apos;,DataTable.&quot;OilReferenceTemperature&quot;,
+        ///        &apos;OilReferencePress [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string OilGasProductionDb {
+            get {
+                return ResourceManager.GetString("OilGasProductionDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///SELECT
+        ///    json_build_object(&apos;Api&apos;,DataTable.&quot;Api&quot;,
+        ///        &apos;ReservoirName&apos;,DataTable.&quot;ReservoirName&quot;,
+        ///        &apos;ReservoirDepth&apos;,DataTable.&quot;ReservoirDepth&quot;,
+        ///        &apos;GasSpecificGravity&apos;,DataTable.&quot;GasSpecificGravity&quot;,
+        ///        &apos;GasReferenceTemperature&apos;,DataTable.&quot;GasReferenceTemperature&quot;,
+        ///        &apos;GasReferencePressure&apos;,DataTable.&quot;GasReferencePressure&quot;,
+        ///        &apos;OilApiGravity&apos;,DataTable.&quot;OilApiGravity&quot;,
+        ///        &apos;OilReferenceTemperature&apos;,DataTable.&quot;OilReferenceTemperature&quot;,
+        ///        &apos;OilReferencePressure&apos;,DataT [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WellsData {
             get {
@@ -179,7 +216,7 @@ namespace EngineeringToolsServer.Services {
         ///) Wells
         ///LEFT JOIN &quot;ShapeFileLocation&quot;
         ///ON Wells.&quot;Api&quot;=&quot;ShapeFileLocation&quot;.&quot;Api&quot;
-        ///WHERE Wells.&quot;Api&quot; IS NOT NULL AND &quot;ShapeFileLocation&quot;.&quot;SurfaceEasti [rest of string was truncated]&quot;;.
+        ///WHERE Wells.&quot;Api&quot; IS NOT NULL AND &quot;ShapeFileLocation&quot;.&quot;SurfaceEasting83&quot; IS NOT [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WellsKarnesExtents {
             get {
@@ -224,7 +261,7 @@ namespace EngineeringToolsServer.Services {
         ///) Wells
         ///LEFT JOIN (
         ///    SELECT &quot;Id&quot;, &quot;Date&quot;, &quot;GasVolume&quot;, &quot;OilVolume&quot;, &quot;CondensateVolume&quot;, &quot;WaterVolume&quot;, &quot;WellId&quot;
-        ///     [rest of string was truncated]&quot;;.
+        ///    FROM &quot;MonthlyP [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WellsKarnesMonthlyProduction {
             get {

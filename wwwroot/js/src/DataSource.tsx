@@ -1,5 +1,59 @@
 ﻿
+import {Guid} from "./guid";
+import {sealed} from "./Decorators";
 
+export class UserCredentials {
+    Uid: Guid;
+    UserName: string;
+    Password: string;
+}
+
+export interface IDataAdapter {
+    GetData(): any;
+
+    SetData(o: any);
+}
+
+@sealed
+export class DataSource {
+    private _dataAdapter: IDataAdapter;
+
+    CreatedByUser: UserCredentials;
+
+    HasErrors: boolean;
+
+    ErrorReport: string;
+
+    constructor(dataAdapter: IDataAdapter, createdByUser: UserCredentials, errorReport: string = "", hasErrors: boolean = false) {
+        this._dataAdapter = dataAdapter;
+        this.CreatedByUser = createdByUser;
+        this.ErrorReport = errorReport;
+        this.HasErrors = hasErrors;
+    }
+
+    static Create(dataAdapter: IDataAdapter, createdByUser: UserCredentials): DataSource {
+        return new DataSource(dataAdapter, createdByUser);
+    }
+
+    SetData(o: any) {
+        this._dataAdapter.SetData(o);
+    }
+
+    GetData(): any {
+        return this._dataAdapter.GetData();
+    }
+}
+
+abstract class DataAdapter implements IDataAdapter {
+
+    constructor() {
+
+    }
+
+    public abstract GetData(): Object;
+
+    public abstract SetData(o: Object);
+}
 
 //interface HttpResponse<T> extends Response {
 //    parsedBody?: T;
@@ -7,7 +61,6 @@
 
 //export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {
 //    const response: HttpResponse<T> = await fetch(request);
-
 
 //    response.parsedBody = await response.json();
 //    return response;
@@ -60,11 +113,6 @@
 
 //    return null;
 //}
-
-
-
-
-
 
 //export async function post<T>(
 //    path: string,

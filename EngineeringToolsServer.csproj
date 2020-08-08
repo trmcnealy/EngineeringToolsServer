@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\ServerEventsController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\js\src\Apptsx" />
     <Content Remove="wwwroot\js\src\Data\DataSourcetsx" />
     <Content Remove="wwwroot\js\src\LassoDrawtsx" />
@@ -44,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Engineering.DataSource" Version="1.4.2" />
+    <PackageReference Include="Engineering.DataSource" Version="1.4.3" />
     <PackageReference Include="Engineering.DataStructures" Version="0.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.6" />
@@ -62,6 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Services\ServerEventsController.cs" />
     <None Include="wwwroot\js\.prettierrc" />
   </ItemGroup>
 
