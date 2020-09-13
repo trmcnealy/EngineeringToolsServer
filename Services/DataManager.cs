@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
@@ -30,7 +31,7 @@ namespace EngineeringToolsServer.Services
 
         private readonly Dictionary<string, object>     _storage     = new Dictionary<string, object>();
         private readonly Dictionary<string, MediaTypes> _storageType = new Dictionary<string, MediaTypes>();
-
+        
         private ILogger _logger;
 
         public string BaseUrl { get; private set; }
@@ -78,7 +79,7 @@ namespace EngineeringToolsServer.Services
         {
             return _storage.ContainsKey(variableName);
         }
-
+        
         public DataManager SetLogger(ILogger logger)
         {
             _logger = logger;

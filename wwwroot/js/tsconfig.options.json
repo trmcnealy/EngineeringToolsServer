@@ -1,0 +1,131 @@
+{
+    "$schema": "http://json.schemastore.org/tsconfig",
+
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "Controls": [ "Controls/index" ],
+            "LayoutItems": [ "Controls/LayoutItems/index" ],
+            "MapboxControls": [ "Controls/MapboxControls/index" ],
+            "MapboxLayers": [ "Controls/MapboxLayers/index" ],
+            "MapboxSchemas": [ "Controls/MapboxSchemas/index" ],
+            "Data": [ "Data/index" ],
+            "DataTypes": [ "DataTypes/index" ],
+            "Extensions": [ "Extensions/index" ],
+            "Programs": [ "Programs/index" ],
+            "Services": [ "Services/index" ],
+            "Themes": [ "Themes/index" ],
+            "Utilities": [ "Utilities/index" ]
+        },
+        // Project Options
+        "allowJs": true,
+        "checkJs": false,
+        //"composite": ,
+        "declaration": true,
+        "declarationMap": true,
+        //"downlevelIteration": true,
+        "importHelpers": true,
+        //"incremental": true,
+        "isolatedModules": true,
+        "jsx": "react",
+        // "lib": ,
+        "module": "ES2020",
+        "noEmit": true,
+        // "outDir": ,
+        // "outFile": ,
+        //"plugins": [
+        //    {
+        //        "name": "typescript-styled-plugin"
+        //    }
+        //],
+        // "removeComments": ,
+        // "rootDir": ,
+        "sourceMap": true,
+        "target": "ES2020",
+        // "tsBuildInfoFile": ,
+
+        // Module Resolution
+        "allowSyntheticDefaultImports": true,
+        "allowUmdGlobalAccess": true,
+        //"baseUrl": ,
+        "esModuleInterop": true,
+        "moduleResolution": "Node",
+        //"paths": ,
+        "preserveSymlinks": true,
+        // "rootDirs": ,
+        // "typeRoots": ,
+        // "types": ,
+
+        //Advanced
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": true,
+        "assumeChangesOnlyAffectDirectDependencies": true,
+        //"charset": ,
+        //"declarationDir": ,
+        "diagnostics": true,
+        //"disableReferencedProjectLoad": false,
+        "disableSizeLimit": true,
+        "disableSolutionSearching": false,
+        //"disableSourceOfProjectReferenceRedirect": ,
+        //"emitBOM": ,
+        "emitDeclarationOnly": false,
+        "extendedDiagnostics": true,
+        "forceConsistentCasingInFileNames": true,
+        //"generateCpuProfile": ,
+        //"importsNotUsedAsValues": false,
+        "jsxFactory": "React.createElement",
+        //"jsxFragmentFactory": ,
+        //"keyofStringsOnly": ,
+        //"listEmittedFiles": ,
+        //"listFiles": ,
+        "maxNodeModuleJsDepth": 3,
+        "newLine": "LF",
+        "noEmitHelpers": false,
+        "noEmitOnError": true,
+        "noErrorTruncation": true,
+        //"noImplicitUseStrict": ,
+        //"noLib": ,
+        "noResolve": false,
+        "noStrictGenericChecks": false,
+        //"out": ,
+        "preserveConstEnums": true,
+        //"reactNamespace": ,
+        "resolveJsonModule": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        //"stripInternal": ,
+        "suppressExcessPropertyErrors": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "traceResolution": false,
+
+        //Command Line
+        //"preserveWatchOutput": ,
+        "pretty": true,
+
+        //Source Maps
+        //"inlineSourceMap": true,
+        "inlineSources": true,
+        //"mapRoot": ,
+        //"sourceRoot": ,
+
+        // Linter Checks
+        "noImplicitAny": false,
+        "noImplicitThis": false,
+        "noFallthroughCasesInSwitch": false,
+        "noImplicitReturns": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+
+        // Strict Checks
+        "strict": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": false,
+        "strictPropertyInitialization": false,
+
+        // Experimental
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
+    }
+}

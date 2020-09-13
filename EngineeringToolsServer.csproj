@@ -1,10 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(GlobalVersioning.props))" />
 
   <PropertyGroup>
+    <Version>$(ENGINEERINGTOOLSSERVER_VERSION)</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <TypeScriptToolsVersion>4.0.2</TypeScriptToolsVersion>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,13 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\ArcGisService.cs" />
     <Compile Remove="Services\ServerEventsController.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\src\Apptsx" />
-    <Content Remove="wwwroot\js\src\Data\DataSourcetsx" />
-    <Content Remove="wwwroot\js\src\LassoDrawtsx" />
+    <Content Remove="commands.json" />
+    <Content Remove="wwwroot\js\src\Controls\DataSourceLayerts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,14 +36,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Remove="wwwroot\js\src\NavMenu.tsx" />
+    <TypeScriptCompile Remove="wwwroot\js\src\Controls\MapboxSchemas\mapbox-gl.background.schema.ts" />
+    <TypeScriptCompile Remove="wwwroot\js\src\Controls\MapboxSchemas\mapbox-gl.circle.schema.ts" />
+    <TypeScriptCompile Remove="wwwroot\js\src\Controls\MapboxSchemas\mapbox-gl.fill.schema.ts" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\js\src\DataSource.tsx" />
-    <Content Include="wwwroot\js\src\NavMenu.tsx" />
+    <_ContentIncludedByDefault Remove="commands.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="wwwroot\js\src\Controls\MapboxSchemas\mapbox-gl.background.schema.ts" />
+    <Content Include="wwwroot\js\src\Controls\MapboxSchemas\mapbox-gl.circle.schema.ts" />
+    <Content Include="wwwroot\js\src\Controls\MapboxSchemas\mapbox-gl.fill.schema.ts" />
+  </ItemGroup>
+  
   <ItemGroup>
     <EmbeddedResource Include="Services\OilGasQueries\WellsData.sql" />
     <EmbeddedResource Include="Services\OilGasQueries\WellsKarnesData.sql" />
@@ -48,8 +61,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Engineering.DataSource" Version="1.4.3" />
-    <PackageReference Include="Engineering.DataStructures" Version="0.1.0" />
+    <PackageReference Include="Engineering.DataSource" Version="$(ENGINEERING_DATASOURCE_VERSION)" />
+    <PackageReference Include="Engineering.DataStructures" Version="$(ENGINEERING_DATASTRUCTURES_VERSION)" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.6" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.9.7">
@@ -57,25 +70,26 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\" />
-    <Folder Include="wwwroot\js\src\Data\" />
-    <Folder Include="wwwroot\js\src\LayoutItems\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="commands.json" />
+    <None Include="Services\ArcGisService.cs" />
     <None Include="Services\ServerEventsController.cs" />
     <None Include="wwwroot\js\.prettierrc" />
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\js\Ignore\Apptsx" />
-    <TypeScriptCompile Include="wwwroot\js\Ignore\LassoDrawtsx" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Compile Update="DataSources\OilGasFieldTypes.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OilGasFieldTypes.tt</DependentUpon>
+    </Compile>
     <Compile Update="Services\OilGasQueries\OilGasQueries.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -91,8 +105,23 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="DataSources\OilGasFieldTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>OilGasFieldTypes.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\js\Ignore\DataSourceLayerts" />
+  </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="REM npm init&#xD;&#xA;REM npm install --save @assemblyscript/loader&#xD;&#xA;REM npm install --save-dev assemblyscript&#xD;&#xA;REM npx asinit .&#xD;&#xA;REM npm run asbuild" />
+    <Exec Command="cd $(ProjectDir)wwwroot\js&#xD;&#xA;npm run build" />
   </Target>
 
 </Project>

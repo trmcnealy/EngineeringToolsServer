@@ -115,17 +115,15 @@ namespace EngineeringToolsServer.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///SELECT
-        ///    json_build_object(&apos;Api&apos;,DataTable.&quot;Api&quot;,
-        ///        &apos;ReservoirName&apos;,DataTable.&quot;ReservoirName&quot;,
-        ///        &apos;ReservoirDepth&apos;,DataTable.&quot;ReservoirDepth&quot;,
-        ///        &apos;GasSpecificGravity&apos;,DataTable.&quot;GasSpecificGravity&quot;,
-        ///        &apos;GasReferenceTemperature&apos;,DataTable.&quot;GasReferenceTemperature&quot;,
-        ///        &apos;GasReferencePressure&apos;,DataTable.&quot;GasReferencePressure&quot;,
-        ///        &apos;OilApiGravity&apos;,DataTable.&quot;OilApiGravity&quot;,
-        ///        &apos;OilReferenceTemperature&apos;,DataTable.&quot;OilReferenceTemperature&quot;,
-        ///        &apos;OilReferencePress [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to SELECT  jsonb_agg(jsonb_build_object(
+        ///                &apos;Well&apos;, jsonb_build_object(
+        ///                                        &apos;Id&apos;,  Well.&quot;Id&quot;,
+        ///                                        &apos;Api&apos;,  Well.&quot;Api&quot;,
+        ///                                        &apos;Name&apos;,  Well.&quot;Name&quot;,
+        ///                                        &apos;Number&apos;,  Well.&quot;Number&quot;,
+        ///                                        &apos;LeaseId&apos;,  Well.&quot;LeaseId&quot;,
+        ///                                        &apos;FieldId&apos;,  Well.&quot;FieldId&quot;,
+        ///                                         [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OilGasDb {
             get {
@@ -153,17 +151,19 @@ namespace EngineeringToolsServer.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///SELECT
-        ///    json_build_object(&apos;Api&apos;,DataTable.&quot;Api&quot;,
-        ///        &apos;ReservoirName&apos;,DataTable.&quot;ReservoirName&quot;,
-        ///        &apos;ReservoirDepth&apos;,DataTable.&quot;ReservoirDepth&quot;,
-        ///        &apos;GasSpecificGravity&apos;,DataTable.&quot;GasSpecificGravity&quot;,
-        ///        &apos;GasReferenceTemperature&apos;,DataTable.&quot;GasReferenceTemperature&quot;,
-        ///        &apos;GasReferencePressure&apos;,DataTable.&quot;GasReferencePressure&quot;,
-        ///        &apos;OilApiGravity&apos;,DataTable.&quot;OilApiGravity&quot;,
-        ///        &apos;OilReferenceTemperature&apos;,DataTable.&quot;OilReferenceTemperature&quot;,
-        ///        &apos;OilReferencePressure&apos;,DataT [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to SELECT
+        ///    Wells.&quot;Api&quot; AS &quot;Api&quot;,
+        ///    Wells.&quot;Name&quot; AS &quot;Name&quot;,
+        ///    Wells.&quot;Number&quot; AS &quot;Number&quot;,
+        ///    &quot;Lease&quot;.&quot;Name&quot; AS &quot;Lease&quot;,
+        ///    &quot;Field&quot;.&quot;Name&quot; AS &quot;Field&quot;,
+        ///    &quot;Company&quot;.&quot;Name&quot; AS &quot;Company&quot;,
+        ///    ReservoirDatas.&quot;ReservoirName&quot; AS &quot;ReservoirName&quot;,
+        ///    ReservoirDatas.&quot;ReservoirDepth&quot; AS &quot;ReservoirDepth&quot;,
+        ///    GasPropertiess.&quot;SpecificGravity&quot; AS &quot;GasSpecificGravity&quot;,
+        ///    OilPropertiess.&quot;Density&quot; AS &quot;OilApiGravity&quot;,
+        ///    &quot;ShapeFileLocation&quot;.&quot;SurfaceLatitude83&quot; AS &quot;SurfaceLatitude&quot;,
+        ///    &quot;ShapeFileLocation&quot;.&quot;SurfaceL [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WellsData {
             get {

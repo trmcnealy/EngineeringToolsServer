@@ -2,33 +2,33 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import classNames from "classnames";
+import sizeMe from "react-sizeme";
 
 import mapboxgl from "mapbox-gl";
 
 import ReactGridLayout, {WidthProvider, ItemCallback, Responsive, ResponsiveProps} from "react-grid-layout";
 
-import * as gridcss from "../node_modules/react-grid-layout/css/styles.css";
-import * as resizablecss from "../node_modules/react-resizable/css/styles.css";
+import * as gridcss from "node_modules/react-grid-layout/css/styles.css";
+import * as resizablecss from "node_modules/react-resizable/css/styles.css";
 
-import {Fabric, initializeIcons, ICustomizations, Customizer} from "office-ui-fabric-react";
+import {Fabric, initializeIcons, ICustomizations, Customizer} from @fluentui/react;
 import {Nav, INavLink, INavLinkGroup} from "office-ui-fabric-react/lib/Nav";
 
 import {CommandBar, ICommandBarItemProps} from "office-ui-fabric-react/lib/CommandBar";
 import {IButtonProps} from "office-ui-fabric-react/lib/Button";
 
-import {property, sealed} from "./Decorators";
-import {Guid} from "./guid";
-import * as UtilityMethods from "./UtilityMethods";
-import {LayoutItem, LayoutItemState, LayoutItemProperties} from "./LayoutItem";
+import {property, sealed} from "Utilities/Decorators";
+import Guid from "DataTypes/Guid";
+import * as UtilityMethods from "Utilities/UtilityMethods";
+import {LayoutItem, LayoutItemState, LayoutItemProperties} from "LayoutItems/LayoutItem";
 
-import {MapView, MapViewProperties} from "./MapView";
+import {MapView, MapViewProperties} from "MapView";
 
-import classNames from "classnames";
-import sizeMe from "react-sizeme";
 
 import As = UtilityMethods.As;
 
-import {DashboardState} from "./DashboardState";
+import {DashboardState} from "DashboardState";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -101,16 +101,14 @@ export interface AddPanelProps {
 //    );
 //}
 
-
-interface GridWrapperProperties extends ResponsiveProps{
+interface GridWrapperProperties extends ResponsiveProps {
     children: JSX.Element | JSX.Element[];
 }
 
 function GridWrapper({onLayoutChange, onBreakpointChange, children}: GridWrapperProperties) {
-
     return (
         <ResponsiveReactGridLayout
-            cols={{ lg: 48, md: 40, sm: 20, xs: 16, xxs: 8 }}
+            cols={{lg: 48, md: 40, sm: 20, xs: 16, xxs: 8}}
             rowHeight={GRID_CELL_HEIGHT}
             onLayoutChange={onLayoutChange}
             onBreakpointChange={onBreakpointChange}
@@ -119,7 +117,6 @@ function GridWrapper({onLayoutChange, onBreakpointChange, children}: GridWrapper
         </ResponsiveReactGridLayout>
     );
 }
-
 
 const SizedReactLayoutGrid = sizeMe({monitorWidth: true})(GridWrapper);
 
@@ -138,14 +135,13 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
         rowHeight: 30
     };
 
-    @property() Uid: string;
+    Uid: string;
 
-    @property() ElementRef: React.RefObject<HTMLDivElement>;
+    ElementRef: React.RefObject<HTMLDivElement>;
 
-    @property() panelMap: Map<string, LayoutItem>;
-    @property() panelRef: Map<string, HTMLElement>;
+    panelMap: Map<string, LayoutItem>;
+    panelRef: Map<string, HTMLElement>;
 
-    @property()
     MainHeaderControlsLeft: ICommandBarItemProps[] = [
         {
             key: "addItem",
@@ -170,7 +166,10 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
                                 componentProperties: As<MapViewProperties>({
                                     className: "mapboxView",
                                     BaseMapStyle: "mapbox://styles/mapbox/dark-v10",
-                                    Bounds: new mapboxgl.LngLatBounds([[-106.52775578, 25.85656136], [-93.53154648, 36.49897217]])
+                                    Bounds: new mapboxgl.LngLatBounds([
+                                        [-106.52775578, 25.85656136],
+                                        [-93.53154648, 36.49897217]
+                                    ])
                                 }),
                                 component: MapView
                             } as LayoutItemProperties;
@@ -213,8 +212,6 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
 
         this.panelMap = new Map<string, LayoutItem>();
         this.panelRef = new Map<string, HTMLElement>();
-
-
     }
 
     componentDidMount() {
@@ -227,7 +224,10 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
             componentProperties: As<MapViewProperties>({
                 className: "mapboxView",
                 BaseMapStyle: "mapbox://styles/mapbox/dark-v10",
-                Bounds: new mapboxgl.LngLatBounds([[-106.52775578, 25.85656136], [-93.53154648, 36.49897217]])
+                Bounds: new mapboxgl.LngLatBounds([
+                    [-106.52775578, 25.85656136],
+                    [-93.53154648, 36.49897217]
+                ])
             }),
             component: MapView
         } as LayoutItemProperties;
@@ -363,14 +363,14 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
     }
 
     renderPanels() {
-        const panelElements:any[] = [];
+        const panelElements: any[] = [];
 
         for (const panel of this.props.dashboard.Panels) {
             const id = panel.props.id.ToString;
 
             panelElements.push(
                 <div key={id} className="react-grid-item" id={"panel-" + id} ref={(elem) => elem && (this.panelRef[id] = elem)}>
-                  {this.renderPanel(panel)}
+                    {this.renderPanel(panel)}
                 </div>
             );
         }
@@ -382,10 +382,7 @@ export default class MainLayout extends React.Component<MainLayoutProps> {
         return (
             <div id="main" ref={this.ElementRef}>
                 <CommandBar items={this.MainHeaderControlsLeft} />
-                <SizedReactLayoutGrid
-                    onLayoutChange={this.onLayoutChange}
-                    onBreakpointChange={this.onBreakpointChange}
-                >
+                <SizedReactLayoutGrid onLayoutChange={this.onLayoutChange} onBreakpointChange={this.onBreakpointChange}>
                     {this.renderPanels()}
                 </SizedReactLayoutGrid>
             </div>

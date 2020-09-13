@@ -20,6 +20,7 @@ namespace EngineeringToolsServer.Services
     public sealed class DatabaseService
     {
         public DbConnection DatabaseConnection { get; set; }
+        public DataSources.DataSource DataSource { get; set; } = new DataSources.OilGasFields();
 
         private static volatile DatabaseService _instance;
 
@@ -36,6 +37,7 @@ namespace EngineeringToolsServer.Services
         private DatabaseService()
         {
             DatabaseConnection = new DbConnection();
+            DatabaseConnection.ConnectAsync().GetAwaiter().GetResult();
         }
 
 //#if NETSTANDARD
@@ -53,9 +55,23 @@ namespace EngineeringToolsServer.Services
 #else
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 #endif
-        private async Task<string?> queryDbAsync(string sql)
+        private async Task<string?> queryDbAsync(string sql, string type, bool isLineString = true)
         {
-            return await DatabaseConnection.SqlQueryAsync(sql);
+            switch(type)
+            {
+                case "json":
+                {
+                    return DatabaseConnection.ResultAsJson(await DatabaseConnection.SqlQueryAsync(sql), type);
+                }
+                case "geojson":
+                {
+                    return DatabaseConnection.ResultAsGeoJson(await DatabaseConnection.SqlQueryAsync(sql), type, isLineString);
+                }
+                default:
+                {
+                    throw new NotSupportedException($"queryDbAsync {type}");
+                }
+            }
         }
 
         //public static DataFrame? QueryDb(string sql)
@@ -63,9 +79,9 @@ namespace EngineeringToolsServer.Services
         //    return _instance.queryDb(sql);
         //}
 
-        public static async Task<string?> QueryDbAsync(string sql)
+        public static async Task<string?> QueryDbAsync(string sql, string type, bool isLineString = true)
         {
-            return await _instance.queryDbAsync(sql);
+            return await _instance.queryDbAsync(sql, type, isLineString);
         }
     }
 }

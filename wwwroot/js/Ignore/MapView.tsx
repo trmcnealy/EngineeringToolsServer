@@ -4,15 +4,15 @@
 import mapboxgl from "mapbox-gl";
 import {Feature, Point, LineString} from "geojson";
 
-import {property, sealed} from "./Decorators";
-import * as UtilityMethods from "./UtilityMethods";
+import {property, sealed} from "Utilities/Decorators";
+import * as UtilityMethods from "Utilities/UtilityMethods";
 
-import {Fabric, initializeIcons, ICustomizations, Customizer} from "office-ui-fabric-react";
+import {Fabric, initializeIcons, ICustomizations, Customizer} from @fluentui/react;
 import {Nav, INavLink, INavLinkGroup} from "office-ui-fabric-react/lib/Nav";
 
-import * as LayoutItem from "./LayoutItem";
-import FrameRateControl from "./FrameRateControl";
-import NavMenu from "./NavMenu";
+import * as LayoutItem from "LayoutItem";
+import FrameRateControl from "FrameRateControl";
+import NavMenu from "NavMenu";
 
 import sls = UtilityMethods.sls;
 import ColorMethods = UtilityMethods.ColorMethods;
@@ -58,7 +58,7 @@ export interface MapViewState {
 mapboxgl.accessToken = "pk.eyJ1IjoidHJtY25lYWx5IiwiYSI6ImNrZDN3aGNvMzBxNjQycW16Zml2M2UwZmcifQ.aT8sIrXsA2pHPSjw_U-fUA";
 
 @sealed
-export class MapView extends React.Component<MapViewProperties, MapViewState> {
+export default class MapView extends React.Component<MapViewProperties, MapViewState> {
     static accessToken = "pk.eyJ1IjoidHJtY25lYWx5IiwiYSI6ImNrZDN3aGNvMzBxNjQycW16Zml2M2UwZmcifQ.aT8sIrXsA2pHPSjw_U-fUA";
 
     static LayerIds: string[] = ["WellLocations", "ReservoirData", "GasProperties", "OilProperties"];
@@ -68,7 +68,10 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
 
         Center: null,
         Zoom: null,
-        Bounds: new mapboxgl.LngLatBounds([[-106.52775578, 25.85656136], [-93.53154648, 36.49897217]]),
+        Bounds: new mapboxgl.LngLatBounds([
+            [-106.52775578, 25.85656136],
+            [-93.53154648, 36.49897217]
+        ]),
 
         ShowNavigationControl: true,
         NavigationControlLocation: "top-left",
@@ -137,13 +140,13 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
         return `${rootUrl}/data/${variable}`;
     }
 
-    @property() Map: mapboxgl.Map;
+    Map: mapboxgl.Map;
 
-    @property() DataEvent: EventSource | null;
+    DataEvent: EventSource | null;
 
-    @property() Element: HTMLDivElement;
+    Element: HTMLDivElement;
 
-    @property() ElementRef: React.RefObject<HTMLDivElement>;
+    ElementRef: React.RefObject<HTMLDivElement>;
 
     constructor(props: MapViewProperties) {
         super(props);
@@ -151,7 +154,6 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
         //this.Properties = {...options, ...MapView.defaultProperties};
 
         this.state = MapView.defaultState;
-
 
         this.ElementRef = React.createRef();
     }
@@ -254,7 +256,10 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                 paint: {
                     "circle-radius": {
                         base: 3,
-                        stops: [[12, 5], [22, 180]]
+                        stops: [
+                            [12, 5],
+                            [22, 180]
+                        ]
                     },
                     "circle-color": ColorMethods.GradientRgb("ReservoirDepth", "#ffffff", "#ff0000", 6, 8000, 18000) as any
                 }
@@ -275,7 +280,10 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                 paint: {
                     "circle-radius": {
                         base: 3,
-                        stops: [[12, 5], [22, 180]]
+                        stops: [
+                            [12, 5],
+                            [22, 180]
+                        ]
                     },
                     "circle-color": ColorMethods.GradientRgb("GasSpecificGravity", "#ffff00", "#ff0000", 6, 0.5, 1.0) as any
                 }
@@ -296,7 +304,10 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                 paint: {
                     "circle-radius": {
                         base: 3,
-                        stops: [[12, 5], [22, 180]]
+                        stops: [
+                            [12, 5],
+                            [22, 180]
+                        ]
                     },
                     "circle-color": ColorMethods.GradientRgb("OilApiGravity", "#00ff00", "#ff0000", 6, 10, 70) as any
                 }
@@ -329,10 +340,7 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                 //<tr><td>OilApiGravity</td><td>${e.features[0].properties.OilApiGravity}</td></tr>
                 //</table>`;
 
-                new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(this.Map);
+                new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(this.Map);
             });
 
             this.AddMousePointer(MapView.LayerIds[MapLayers.ReservoirData]);
@@ -355,10 +363,7 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                                                 <tr><td>ReservoirDepth</td><td>${e.features[0].properties.ReservoirDepth.toFixed(2)}</td></tr>
                                                 </table>`);
 
-                new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(this.Map);
+                new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(this.Map);
             });
 
             this.AddMousePointer(MapView.LayerIds[MapLayers.GasProperties]);
@@ -380,10 +385,7 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                                                 <tr><td>GasSpecificGravity</td><td>${e.features[0].properties.GasSpecificGravity.toFixed(4)}</td></tr>
                                                 </table>`);
 
-                new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(this.Map);
+                new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(this.Map);
             });
 
             this.AddMousePointer(MapView.LayerIds[MapLayers.OilProperties]);
@@ -405,10 +407,7 @@ export class MapView extends React.Component<MapViewProperties, MapViewState> {
                                             <tr><td>OilApiGravity</td><td>${e.features[0].properties.OilApiGravity.toFixed(2)}</td></tr>
                                             </table>`);
 
-                new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(this.Map);
+                new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(this.Map);
             });
         });
 

@@ -1,0 +1,225 @@
+﻿import * as React from "react";
+import * as ReactDOM from "react-dom";
+
+import mapboxgl from "mapbox-gl";
+import * as chroma from "chroma-js";
+
+import {format as FormatString} from "@uifabric/utilities";
+
+import MapboxMap from "MapboxMap";
+import {ColorStops, LegendControl} from "MapboxControls";
+import ColorPalette, {IPalette} from "DataTypes/ColorPalette";
+import DataSource from "Data/DataSource";
+import {ClassificationMethod, getBreaks, Limits, getClassCount, filterValues} from "DataTypes/DataColumnTypes";
+import {MapboxMapProperties} from "MapboxMap";
+import {MapboxLayer, LayerSettings} from "MapboxLayer";
+import MapboxFilter from "Controls/MapboxFilter";
+import {TooltipEventArgs, TooltipDataItem} from "Services/TooltipService";
+import { DataColumnMetadataMap } from "Utilities/UtilityMethods";
+
+export default class DataSourceLayer extends MapboxLayer {
+    private filter: MapboxFilter;
+    private palette: ColorPalette;
+    private settings: LayerSettings;
+
+    static readonly Id = "DataSource";
+    private static readonly HighlightID = "DataSource-highlight";
+
+    private static readonly LayerOrder = [DataSourceLayer.Id, DataSourceLayer.HighlightID];
+
+    constructor(map: MapboxMap, filter: MapboxFilter, palette: ColorPalette) {
+        super(map);
+        this.id = DataSourceLayer.Id;
+        this.filter = filter;
+        this.palette = palette;
+        this.source = Sources.Point;
+    }
+
+    getLayerIDs() {
+        return [DataSourceLayer.Id];
+    }
+
+    getSource(settings: LayerSettings) {
+        this.settings = settings.circle;
+        return super.getSource(settings);
+    }
+
+    addLayer(settings: LayerSettings, beforeLayerId: string, mataColumnMap: DataColumnMetadataMap) {
+        const map = this.parent.getMap();
+        const latitude = metadata.latitude.displayName;
+        const layers = {};
+
+        layers[DataSourceLayer.Id] = MapboxLayer.Decorate({
+            id: DataSourceLayer.Id,
+            source: "data",
+            type: "circle"
+        });
+
+        const zeroFilter = ["==", latitude, ""];
+
+        layers[DataSourceLayer.HighlightID] = MapboxLayer.Decorate({
+            id: DataSourceLayer.HighlightID,
+            type: "circle",
+            source: "data",
+            filter: zeroFilter
+        });
+
+        DataSourceLayer.LayerOrder.forEach((layerId) => map.addLayer(layers[layerId], beforeLayerId));
+
+        map.setPaintProperty(DataSourceLayer.HighlightID, "circle-color", settings.circle.highlightColor);
+        map.setPaintProperty(DataSourceLayer.HighlightID, "circle-opacity", 1);
+        map.setPaintProperty(DataSourceLayer.HighlightID, "circle-stroke-width", 1);
+        map.setPaintProperty(DataSourceLayer.HighlightID, "circle-stroke-color", "black");
+    }
+
+    moveLayer(beforeLayerId: string) {
+        const map = this.parent.getMap();
+        DataSourceLayer.LayerOrder.forEach((layerId) => map.moveLayer(layerId, beforeLayerId));
+    }
+
+    hoverHighLight(e) {
+        if (!this.layerExists()) {
+            return;
+        }
+
+        const metadata = this.parent.getMetadata();
+        const latitude = metadata[latitude].displayName;
+        const longitude = metadata[longitude].displayName;
+        const eventProps = e.features[0].properties;
+        const lngLatFilter = ["all", ["==", latitude, eventProps[latitude]], ["==", longitude, eventProps[longitude]]];
+
+        this.parent.getMap().setFilter(DataSourceLayer.HighlightID, lngLatFilter);
+    }
+
+    removeHighlight(metadata: DataColumnMetadataMap) {
+        if (!this.layerExists()) {
+            return;
+        }
+        const latitude = metadata.latitude.displayName;
+        const map = this.parent.getMap();
+        const zeroFilter = ["==", latitude, ""];
+
+        map.setFilter(DataSourceLayer.HighlightID, zeroFilter);
+
+        if (this.settings.opacity) {
+            map.setPaintProperty(DataSourceLayer.Id, "circle-opacity", this.settings.opacity / 100);
+        }
+    }
+
+    updateSelection(features, metadata: DataColumnMetadataMap) {
+        const map = this.parent.getMap();
+        const latitude = metadata[latitude].displayName;
+        const longitude = metadata[longitude].displayName;
+
+        let lngLatFilter = new Array<string>();
+
+        lngLatFilter.push("any");
+
+        let selectionIds = features.slice(0, constants.MAX_SELECTION_COUNT).map((feature, index) => {
+            lngLatFilter.push(["all", ["==", latitude, feature.properties[latitude]], ["==", longitude, feature.properties[longitude]]]);
+            return feature.id;
+        });
+
+        this.filter.addSelection(selectionIds);
+
+        map.setFilter(DataSourceLayer.HighlightID, lngLatFilter);
+
+        const opacity = this.filter.getSelectionOpacity(this.settings.opacity);
+
+        map.setPaintProperty(DataSourceLayer.Id, "circle-opacity", opacity);
+
+        return selectionIds;
+    }
+
+    removeLayer() {
+        const map = this.parent.getMap();
+        DataSourceLayer.LayerOrder.forEach((layerId) => map.removeLayer(layerId));
+        this.source.removeFromMap(map, DataSourceLayer.Id);
+    }
+
+    applySettings(properties: MapboxMapProperties, mataColumnMap: DataColumnMetadataMap): void {
+        super.applySettings(settings, metadata);
+        const map = this.parent.getMap();
+        if (settings.circle.show) {
+            const isGradient = shouldUseGradient(metadata.color);
+            const limits = this.source.getLimits();
+            const sizes = DataSourceLayer.getSizes(limits.size, map, settings, metadata.size);
+
+            this.colorStops = this.generateColorStops(settings.circle, isGradient, limits.color, this.palette);
+            let colorStyle = DataSourceLayer.getColorStyle(isGradient, settings, metadata.color, this.colorStops);
+
+            map.setPaintProperty(DataSourceLayer.Id, "circle-radius", sizes);
+            map.setPaintProperty(DataSourceLayer.HighlightID, "circle-radius", sizes);
+            map.setPaintProperty(DataSourceLayer.HighlightID, "circle-color", settings.circle.highlightColor);
+            map.setPaintProperty(DataSourceLayer.Id, "circle-color", colorStyle);
+            map.setLayerZoomRange(DataSourceLayer.Id, settings.circle.minZoom, settings.circle.maxZoom);
+            map.setPaintProperty(DataSourceLayer.Id, "circle-blur", settings.circle.blur / 100);
+            map.setPaintProperty(DataSourceLayer.Id, "circle-opacity", settings.circle.opacity / 100);
+            map.setPaintProperty(DataSourceLayer.Id, "circle-stroke-width", settings.circle.strokeWidth);
+            map.setPaintProperty(DataSourceLayer.Id, "circle-stroke-opacity", settings.circle.strokeOpacity / 100);
+            map.setPaintProperty(DataSourceLayer.Id, "circle-stroke-color", settings.circle.strokeColor);
+        }
+    }
+
+    handleTooltip(tooltipEvent: TooltipEventArgs<number>, dataColumnMap: DataColumnMetadataMap, properties: MapboxMapProperties): Array<TooltipDataItem> {
+        const tooltipData = Layer.getTooltipData(tooltipEvent.data).filter((elem) => metadata.tooltips[elem.displayName]);
+
+        return tooltipData.map((data) => {
+            data.value = this.getFormattedTooltipValue(metadata, data);
+            return data;
+        });
+    }
+
+    showLegend(properties: MapboxMapProperties, dataColumnMap: DataColumnMetadataMap) {
+        return settings.circle.legend && metadata.color && super.showLegend(settings, metadata);
+    }
+
+    private static getColorStyle(isGradient: boolean, settings: MapboxSettings, colorField: any, colorStops: ColorStops) {
+        if (!colorField) {
+            return settings.circle.minColor;
+        }
+
+        if (isGradient) {
+            // Set colors for continuous value
+            const continuousStyle: any = ["interpolate", ["linear"], ["to-number", ["get", colorField.displayName]]];
+            colorStops.forEach(({colorStop, color}) => {
+                continuousStyle.push(colorStop);
+                continuousStyle.push(color);
+            });
+
+            return continuousStyle;
+        }
+
+        // Set colors for categorical value
+        let categoricalStyle: any = ["match", ["to-string", ["get", colorField.displayName]]];
+        colorStops.forEach(({colorStop, color}) => {
+            categoricalStyle.push(colorStop);
+            categoricalStyle.push(color);
+        });
+
+        // Add transparent as default so that we only see regions
+        // for which we have data values
+        categoricalStyle.push("rgba(255,0,0,255)");
+
+        return categoricalStyle;
+    }
+
+    private static getSizes(sizeLimits: Limits, map: any, settings: any, sizeField: any) {
+        if (sizeField && sizeLimits && sizeLimits.min != null && sizeLimits.max != null && sizeLimits.min !== sizeLimits.max) {
+            const style: Array<any> = ["interpolate", ["linear"], ["to-number", ["get", sizeField.displayName]]];
+
+            const classCount = getClassCount(sizeLimits.values);
+            const sizeStops: Array<any> = getBreaks(sizeLimits.values, ClassificationMethod.Quantile, classCount);
+            const sizeDelta = (settings.circle.radius * settings.circle.scaleFactor - settings.circle.radius) / classCount;
+
+            sizeStops.map((sizeStop, index) => {
+                const size = settings.circle.radius + index * sizeDelta;
+                style.push(sizeStop);
+                style.push(size);
+            });
+            return style;
+        } else {
+            return ["interpolate", ["linear"], ["zoom"], 0, settings.circle.radius, 18, settings.circle.radius * settings.circle.scaleFactor];
+        }
+    }
+}

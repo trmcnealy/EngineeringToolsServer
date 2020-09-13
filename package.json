@@ -1,0 +1,17 @@
+{
+    "name": "engineeringtoolsserver",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {},
+    "scripts": {
+        "build-wasm-debug": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run build-wasm-debug",
+        "build-wasm-release": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run build-wasm-release",
+        "build-wasm": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run build-wasm",
+        "build-tsc": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run build-tsc",
+        "build-css": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run build-css",
+        "build": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run build",
+        "lint": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run lint",
+        "pretty": "cd D:/TFS_Sources/Github/Compilation/trmcnealy/Web/EngineeringToolsServer/wwwroot/js & npm run pretty"
+    },
+    "devDependencies": {}
+}

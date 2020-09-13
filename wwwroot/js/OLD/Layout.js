@@ -1,18 +1,17 @@
-import React, { Component } from "react";
-import { Container } from "reactstrap";
-import { NavMenu } from "./NavMenu";
+import React, {Component} from "react";
+import {Container} from "reactstrap";
+import {NavMenu} from "NavMenu";
 
-import {MyFirstGrid} from "./Dashboard";
+import {MyFirstGrid} from "Dashboard";
 
-
-export class Layout extends Component {
+export default class Layout extends Component {
     static displayName = Layout.name;
 
-    render () {
+    render() {
         return (
             <div id="app" className="app">
-                <NavMenu/>
-                <MyFirstGrid/>
+                <NavMenu />
+                <MyFirstGrid />
             </div>
         );
     }

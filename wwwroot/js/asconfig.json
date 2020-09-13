@@ -1,0 +1,28 @@
+{
+    "targets": {
+        "debug": {
+            "binaryFile": "build/untouched.wasm",
+            "textFile": "build/untouched.wat",
+            "sourceMap": false,
+            "debug": true,
+            "optimize": false
+        },
+        "release": {
+            "binaryFile": "build/optimized.wasm",
+            "textFile": "build/optimized.wat",
+            "sourceMap": false,
+            "debug": false,
+            "optimize": true
+        }
+    },
+    "options": {
+        "extension": ".ts",
+        "converge": true,
+        "maximumMemory": true,
+        "sharedMemory": true,
+        "runtime": "none",
+        "noAssert": true,
+        "enable": [ "bulk-memory", "simd", "threads", "reference-types" ],
+        "noEmit": false
+    }
+}

@@ -1,16 +1,16 @@
 ﻿import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import {Fabric, initializeIcons, ICustomizations, Customizer} from "office-ui-fabric-react";
-import {getTheme, mergeStyleSets, FontWeights, ContextualMenu, Toggle, IDragOptions, IconButton, Overlay} from "office-ui-fabric-react";
+import {Fabric, initializeIcons, ICustomizations, Customizer} from @fluentui/react;
+import {getTheme, mergeStyleSets, FontWeights, ContextualMenu, Toggle, IDragOptions, IconButton, Overlay} from @fluentui/react;
 
 import {Spinner, SpinnerSize} from "office-ui-fabric-react/lib/Spinner";
 import {DefaultButton, PrimaryButton} from "office-ui-fabric-react/lib/Button";
 import {Dialog, DialogFooter} from "office-ui-fabric-react/lib/Dialog";
 import {ProgressIndicator} from "office-ui-fabric-react/lib/ProgressIndicator";
 
-import {property, sealed} from "./Decorators";
-import * as MapView from "./MapView";
+import {property, sealed} from "Utilities/Decorators";
+import * as MapView from "MapView";
 
 export interface ProgressOverlayProperties {
     label: string;
@@ -60,7 +60,8 @@ export default class ProgressOverlay extends React.PureComponent<ProgressOverlay
                 modalProps={{
                     isBlocking: true,
                     topOffsetFixed: true
-                }}>
+                }}
+            >
                 <ProgressIndicator label={this.props.label} description={this.props.description} percentComplete={this.state.percentComplete} />
 
                 <DialogFooter>

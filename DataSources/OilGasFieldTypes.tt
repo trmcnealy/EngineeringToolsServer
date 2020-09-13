@@ -1,0 +1,68 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+// ReSharper disable ConvertToAutoProperty
+// ReSharper disable InconsistentNaming
+
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace EngineeringToolsServer.DataSources
+{
+<#
+    List<string> enumTypeIDValueNames = new List<string>()
+    {
+        "None",
+        "Well",
+        "Lease",
+        "Field",
+        "Company",
+        "Location",
+        "WellboreDetails",
+        "CompletionDetails",
+        "PerforationInterval",
+        "ReservoirData",
+        "ReservoirProperties",
+        "GasProperties",
+        "OilProperties",
+        "WaterProperties",
+        "MonthlyProduction"
+    };
+
+    List<string> enumTypeIDValueValues = new List<string>()
+    {
+        "None",
+        "Well",
+        "Lease",
+        "Field",
+        "Company",
+        "Location",
+        "WellboreDetails",
+        "CompletionDetails",
+        "PerforationInterval",
+        "ReservoirData",
+        "ReservoirProperties",
+        "GasProperties",
+        "OilProperties",
+        "WaterProperties",
+        "MonthlyProduction"
+    };
+
+    string enumTypeIDName = "TableKind";
+    string valueTypeIDType = "string";
+    int indentLevel = 1;
+
+    string typeEnum = ENUM_BUILDER(enumTypeIDName,
+                                   enumTypeIDValueNames,
+                                   enumTypeIDValueValues,
+                                   valueTypeIDType,
+                                   indentLevel);
+#>
+<#=typeEnum #>
+}
+
+<#@ include file="..\..\..\BuildTools\EnumStringBuilder.ttinclude" #>

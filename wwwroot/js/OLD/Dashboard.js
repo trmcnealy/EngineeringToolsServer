@@ -1,17 +1,16 @@
-﻿
-import React from "react";
-import { WidthProvider, Responsive } from "react-grid-layout";
+﻿import React from "react";
+import {WidthProvider, Responsive} from "react-grid-layout";
 import ReactDOM from "react-dom";
 
 //import GridLayout from "react-grid-layout";
-import "../css/Dashboard.css"
+import "../css/Dashboard.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export class MyFirstGrid extends React.PureComponent {
+export default class MyFirstGrid extends React.PureComponent {
     static defaultProps = {
-        onLayoutChange: function () { },
-        cols: { lg: 48, md: 40, sm: 20, xs: 16, xxs: 8 },
+        onLayoutChange: function () {},
+        cols: {lg: 48, md: 40, sm: 20, xs: 16, xxs: 8},
         rowHeight: 30
     };
 
@@ -42,7 +41,6 @@ export class MyFirstGrid extends React.PureComponent {
     //    width: 1200,
     //    height: 800
     //};
-
 
     componentDidMount() {
         this.mounted = true;
@@ -82,9 +80,7 @@ export class MyFirstGrid extends React.PureComponent {
         return (
             <div key={i} data-grid={el}>
                 <span className="text">{i}</span>
-                <span className="chart-dropdown-button"
-                      style={removeStyle}
-                      onClick={this.onRemoveItem.bind(this, i)}>
+                <span className="chart-dropdown-button" style={removeStyle} onClick={this.onRemoveItem.bind(this, i)}>
                     x
                 </span>
             </div>
@@ -92,7 +88,6 @@ export class MyFirstGrid extends React.PureComponent {
     }
 
     onAddItem() {
-
         console.log("adding", `n${this.state.items.length}`);
 
         this.setState({
@@ -106,7 +101,6 @@ export class MyFirstGrid extends React.PureComponent {
         });
     }
 
-
     onBreakpointChange(breakpoint, cols) {
         this.setState({
             breakpoint: breakpoint,
@@ -116,27 +110,25 @@ export class MyFirstGrid extends React.PureComponent {
 
     onLayoutChange(layout) {
         this.props.onLayoutChange(layout);
-        this.setState({ layout: layout });
+        this.setState({layout: layout});
     }
 
     onRemoveItem(i) {
         console.log("removing", i);
 
-        const index = this.state.items.indexOf({ i: i });
+        const index = this.state.items.indexOf({i: i});
 
         delete this.state.items[index];
 
-        this.setState({ items: this.state.items });
+        this.setState({items: this.state.items});
     }
 
-
     render() {
-
         console.log(this);
 
         return (
             <ResponsiveReactGridLayout onLayoutChange={this.onLayoutChange} onBreakpointChange={this.onBreakpointChange} {...this.props}>
-                {this.state.items.map(el => this.createElement(el))}
+                {this.state.items.map((el) => this.createElement(el))}
             </ResponsiveReactGridLayout>
         );
 

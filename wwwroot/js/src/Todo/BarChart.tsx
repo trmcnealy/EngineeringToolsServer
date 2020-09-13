@@ -1,10 +1,7 @@
-﻿
-import * as React from "react";
+﻿import * as React from "react";
 
-
-export default class BarChart extends React.PureComponent {
-
+export class BarChart extends React.PureComponent {
     render() {
-        return ({} as any);
+        return {} as any;
     }
 }

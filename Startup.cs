@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using EngineeringToolsServer.Services;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -23,8 +24,10 @@ namespace EngineeringToolsServer
         }
 
         public IConfiguration Configuration { get; }
-
+        
         //public static IServerEventsController ServerEventsController { get; } = new ServerEventsController();
+
+        public static DataSources.OilGasDataSourceController OilGasDataSourceController { get; } = new DataSources.OilGasDataSourceController();
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -34,6 +37,8 @@ namespace EngineeringToolsServer
                                        {
                                            configuration.RootPath = "wwwroot/build";
                                        });
+
+            services.AddSingleton(OilGasDataSourceController);
 
             //services.AddSingleton(ServerEventsController);
         }
@@ -67,14 +72,15 @@ namespace EngineeringToolsServer
             {
                 //endpoints.MapBlazorHub().AddComponent<App>(selector: "app");
                 endpoints.MapRazorPages();
+
                 endpoints.MapControllerRoute(name: "default",
-                                             pattern: "{controller}/{action=Index}/{id?}");
+                                             pattern: "{controller}/{action}");
                 endpoints.MapFallbackToPage("/Index");
             });
 
             app.UseSpa(spa =>
                        {
-                           spa.Options.SourcePath = "ClientApp";
+                           spa.Options.SourcePath = "wwwroot/js/src";
 
                            if (env.IsDevelopment())
                            {

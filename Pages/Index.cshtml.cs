@@ -24,19 +24,23 @@ namespace EngineeringToolsServer.Pages
             _navigationManager = navigationManager;
         }
 
-        public async Task OnGetAsync()
-        {
+        //public async Task OnGetAsync()
+        //{
 
 
-            DataManager.Instance[("OilGasDbData", MediaTypes.Json)] = await  DatabaseService.QueryDbAsync(OilGasQueries.OilGasDb);
+
+        //    //DataManager.Instance[("OilGasDbData", MediaTypes.Json)] = await  DatabaseService.QueryDbAsync(OilGasQueries.WellsData);
 
 
-            //_navigationManager.NavigateTo("/ArcGis");
 
-            //return await Task.FromResult(RedirectToPage("/ArcGis"));
-            //return await Task.FromResult(RedirectToPage("/Mapbox"));
 
-        }
+
+        //    //_navigationManager.NavigateTo("/ArcGis");
+
+        //    //return await Task.FromResult(RedirectToPage("/ArcGis"));
+        //    //return await Task.FromResult(RedirectToPage("/Mapbox"));
+
+        //}
 
         //public async Task<IActionResult> OnPostAsync()
         //{

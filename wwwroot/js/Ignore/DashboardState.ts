@@ -1,9 +1,7 @@
-﻿
-import {Emitter, AppEvent} from "./Events";
-import {LayoutItem} from "./LayoutItem";
+﻿import {Emitter, AppEvent} from "Utilities/Events";
+import {LayoutItem} from "LayoutItem";
 
-export class DashboardState {
-
+export default class DashboardState {
     Panels: Array<LayoutItem>;
     Events: Emitter;
 

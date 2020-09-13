@@ -1,42 +1,55 @@
 {
-    "$schema": "http://json.schemastore.org/tsconfig",
+    "extends": "./tsconfig.options.json",
 
     "compilerOptions": {
-        "module": "CommonJS",
-        "moduleResolution": "node",
-        "target": "es5",
-        "lib": [
-            "es5",
-            "scripthost",
-            "es2015.collection",
-            "es2015.promise",
-            "es2015.iterable",
-            "dom"
+        "rootDir": ".",
+        "rootDirs": [
+            "./src",
+            "./src/Controls",
+            "./src/Controls/LayoutItems",
+            "./src/Controls/MapboxControls",
+            "./src/Controls/MapboxLayers",
+            "./src/Controls/MapboxSchemas",
+            "./src/Data",
+            "./src/DataTypes",
+            "./src/Extensions",
+            "./src/Programs",
+            "./src/Services",
+            "./src/Themes",
+            "./src/Utilities"
         ],
-        "outDir": "build",
-        "rootDirs": [ "src" ],
-        "forceConsistentCasingInFileNames": true,
-        "allowSyntheticDefaultImports": true,
-        "jsx": "react",
-        "declaration": true,
-        "sourceMap": true,
-        "declarationMap": true,
-        "inlineSources": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "strictNullChecks": false,
-        "noUnusedLocals": false,
-        "noEmit": true,
-        "esModuleInterop": true,
-        "types": []
+        //"composite": true,
+        "lib": [
+            //"ES2017.SharedMemory",
+            //"ES2017.TypedArrays",
+            "ES2020",
+            //"ES2020.SharedMemory",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "outDir": "bin",
+        "declarationDir": "bin",
+        //"generateCpuProfile": "ts.cpuprofile",
+        "typeRoots": [
+            "node_modules/@types"
+        ]
     },
+    "types": [
+        "node",
+        "geojson",
+        "mapbox-gl",
+        "assembly"
+    ],
+    "files": [
+        "src/index.tsx"
+    ],
     "include": [
-        "src/**/*.ts",
         "src/**/*.tsx"
     ],
     "exclude": [
         "node_modules",
         "lib",
+        "OLD",
         "Ignore"
     ]
 }

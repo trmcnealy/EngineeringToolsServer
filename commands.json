@@ -1,0 +1,9 @@
+{
+  "commands": {
+    "build": {
+      "fileName": "cmd.exe",
+      "workingDirectory": "./wwwroot/js",
+      "arguments": "/c npm run build-tsc"
+    }
+  }
+}
